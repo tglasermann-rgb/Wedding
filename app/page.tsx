@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Logo, Mark } from "@/components/brand/logo";
 
-const CONTACT = "hello@celebra.app";
+const CONTACT = "hello@getcelebra.com";
 
 const STEPS = [
   ["Create your page", "Pick a theme and add your story, schedule, venue, registry and FAQ. It looks lovely on every phone."],

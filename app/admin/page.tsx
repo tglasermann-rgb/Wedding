@@ -26,7 +26,7 @@ export default async function AdminPage() {
         <ActionForm action={createEvent} className="grid gap-3 md:grid-cols-3">
           <Field label="Title"><Input name="title" required placeholder="Anna & David’s wedding" /></Field>
           <Field label="Hosts"><Input name="hosts" placeholder="Anna & David" /></Field>
-          <Field label="Slug (URL)" hint="celebra.app/anna-and-david"><Input name="slug" required pattern="[a-z0-9][a-z0-9-]+[a-z0-9]" /></Field>
+          <Field label="Slug (URL)" hint="getcelebra.com/anna-and-david"><Input name="slug" required pattern="[a-z0-9][a-z0-9-]+[a-z0-9]" /></Field>
           <Field label="Type"><Select name="type">{EVENT_TYPE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</Select></Field>
           <Field label="Date"><Input name="event_date" type="date" /></Field>
           <Field label="Owner email"><Input name="owner_email" type="email" required /></Field>

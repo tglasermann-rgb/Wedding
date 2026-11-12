@@ -18,6 +18,8 @@ Route A, "The Table": a circle of people seen from above. Nine dots gather into 
 | Olive | `#6B7F5A` | Attending / success |
 | Linen | `#FAF5EF` | Page background |
 
+Domain: **getcelebra.com** (the brand name stays Celebra). Contact: `hello@getcelebra.com`, sender: `invitations@getcelebra.com`.
+
 Type: **Bricolage Grotesque** for headings (`font-display`), **Figtree** for text and UI (`font-sans`). Voice: warm, calm, hospitable.
 
 - Tokens live in `app/globals.css`. Tailwind's `stone` and `emerald` ramps are re-tinted to the brand, so existing utilities follow it.
