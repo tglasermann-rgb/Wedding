@@ -41,7 +41,7 @@ export async function addHousehold(eventId: string, _: ActionState, fd: FormData
     const { error: gErr } = await supabase.from("guests").insert(members.map((m) => ({ ...m, event_id: eventId, household_id: hh.id })));
     if (gErr) throw gErr;
     revalidatePath(path(eventId));
-    return { ok: true, message: `Invitation "${name}" added (${members.length}).` };
+    return { ok: true, message: `Household "${name}" added (${members.length} ${members.length === 1 ? "guest" : "guests"}).` };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }
@@ -69,7 +69,7 @@ export async function importGuests(eventId: string, rows: ImportRow[]): Promise<
       guests += h.guests.length;
     }
     revalidatePath(path(eventId));
-    return { ok: true, message: `Imported ${guests} guests into ${created} new invitations.` };
+    return { ok: true, message: `Imported ${guests} guests into ${created} new households.` };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }

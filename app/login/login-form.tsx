@@ -21,8 +21,8 @@ export function LoginForm({ next }: { next: string }) {
   if (state === "sent") return <p className="mt-6 rounded-lg bg-emerald-50 p-4 text-sm text-emerald-800">Check your inbox at <b>{email}</b> and open the link to log in.</p>;
   return (
     <form onSubmit={onSubmit} className="mt-6 space-y-3">
-      <Input type="email" required placeholder="you@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <Button className="w-full" disabled={state === "sending"}>{state === "sending" ? "Sending…" : "Send link"}</Button>
+      <Input type="email" required placeholder="you@example.com" aria-label="Email address" value={email} onChange={(e) => setEmail(e.target.value)} />
+      <Button className="w-full" disabled={state === "sending"}>{state === "sending" ? "Sending…" : "Email me a link"}</Button>
       {state === "error" && <p className="text-sm text-red-700">{err}</p>}
     </form>
   );

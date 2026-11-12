@@ -41,7 +41,7 @@ export async function deleteSession(eventId: string, id: string) {
 export async function addQuestion(eventId: string, _: ActionState, fd: FormData): Promise<ActionState> {
   const { supabase } = await requireEvent(eventId, { edit: true });
   const label = String(fd.get("label") || "").trim();
-  if (!label) return { ok: false, message: "Enter the question" };
+  if (!label) return { ok: false, message: "Enter a question" };
   const options = String(fd.get("options") || "").split(",").map((s) => s.trim()).filter(Boolean);
   const { error } = await supabase.from("rsvp_questions").insert({ event_id: eventId, label, kind: options.length ? "select" : "text", options });
   revalidatePath(path(eventId));

@@ -37,10 +37,10 @@ export async function POST(req: NextRequest) {
     const parsed = parseReply(ev.text);
     if (parsed === "stop") {
       await sb.from("guests").update({ whatsapp_opt_out: true }).eq("id", m.guest_id);
-      if (wa) await sendWhatsAppText(wa, ev.from, "Done — you won't receive more WhatsApp messages from us.");
+      if (wa) await sendWhatsAppText(wa, ev.from, "Done. We won't send you any more messages on WhatsApp.");
     } else if (parsed && parsed !== "pending") {
       await setGuestStatusAllSessions(sb, m.guest_id, m.event_id, parsed, "whatsapp");
-      if (wa) await sendWhatsAppText(wa, ev.from, `Thank you! We recorded your answer: ${RSVP_LABELS[parsed]}.`);
+      if (wa) await sendWhatsAppText(wa, ev.from, `Thank you! We saved your RSVP: ${RSVP_LABELS[parsed]}.`);
     }
   }
   return NextResponse.json({ ok: true });

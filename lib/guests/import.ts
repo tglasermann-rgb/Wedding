@@ -19,15 +19,15 @@ export interface ImportRow {
 }
 
 const ALIASES: Record<keyof Omit<ImportRow, "tags"> | "tags", string[]> = {
-  household: ["household", "party", "invitation", "group", "familia", "invitacion", "invitación", "grupo", "family"],
-  first_name: ["first_name", "first name", "first", "name", "nombre"],
-  last_name: ["last_name", "last name", "last", "surname", "apellido"],
-  email: ["email", "e-mail", "mail", "email address", "correo"],
-  phone: ["phone", "phone number", "mobile", "cell", "telefono", "teléfono", "celular", "whatsapp", "movil", "móvil"],
-  side: ["side", "guest of", "lado"],
-  tags: ["tags", "labels", "category", "etiquetas", "grupo2", "categoria", "categoría"],
-  is_child: ["is_child", "child", "kid", "minor", "niño", "nino", "child", "menor"],
-  plus_ones: ["plus_ones", "plus ones", "guests allowed", "acompañantes", "acompanantes", "+1"],
+  household: ["household", "family", "invitation", "group", "party", "familia", "invitacion", "invitación", "grupo"],
+  first_name: ["first_name", "first name", "firstname", "first", "name", "nombre"],
+  last_name: ["last_name", "last name", "lastname", "last", "surname", "apellido", "apellidos"],
+  email: ["email", "e-mail", "email address", "mail", "correo"],
+  phone: ["phone", "phone number", "mobile", "cell", "whatsapp", "telefono", "teléfono", "celular", "movil", "móvil"],
+  side: ["side", "guest of", "lado", "de parte de"],
+  tags: ["tags", "tag", "category", "categories", "etiquetas", "grupo2", "categoria", "categoría"],
+  is_child: ["is_child", "child", "is child", "kid", "minor", "niño", "nino", "menor"],
+  plus_ones: ["plus_ones", "plus ones", "plus-ones", "+1", "acompañantes", "acompanantes"],
 };
 
 const norm = (s: string) => s.trim().toLowerCase();
@@ -35,7 +35,7 @@ const truthy = (v: unknown) => ["1", "si", "sí", "yes", "true", "x"].includes(n
 
 export interface ImportResult { rows: ImportRow[]; errors: { line: number; message: string }[] }
 
-/** Map spreadsheet rows (header -> value) to import rows. Rows without household use "First Last". */
+/** Map spreadsheet rows (header -> value) to import rows. Rows without a household use "First Last". */
 export function mapImportRows(records: Record<string, unknown>[], defaultCountry: CountryCode = "US"): ImportResult {
   const rows: ImportRow[] = [];
   const errors: ImportResult["errors"] = [];
@@ -48,7 +48,7 @@ export function mapImportRows(records: Record<string, unknown>[], defaultCountry
     if (!first) { if (Object.values(rec).some((v) => String(v ?? "").trim())) errors.push({ line: i + 2, message: "Missing first name" }); return; }
     const phoneRaw = get("phone");
     const phone = normalizePhone(phoneRaw, defaultCountry);
-    if (phoneRaw && !phone) errors.push({ line: i + 2, message: `Invalid phone: ${phoneRaw}` });
+    if (phoneRaw && !phone) errors.push({ line: i + 2, message: `Invalid phone number: ${phoneRaw}` });
     const email = get("email").toLowerCase();
     if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) errors.push({ line: i + 2, message: `Invalid email: ${email}` });
     const last = get("last_name");

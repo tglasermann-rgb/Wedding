@@ -32,21 +32,21 @@ export default async function SettingsPage({ params }: { params: Promise<{ event
             <Field label="Date"><Input type="date" name="event_date" defaultValue={event.event_date ?? ""} /></Field>
             <Field label="RSVP deadline"><Input type="date" name="rsvp_deadline" defaultValue={event.rsvp_deadline ?? ""} /></Field>
           </div>
-          <Field label="Time zone" hint="e.g. America/New_York, America/Los_Angeles, Europe/London, Asia/Jerusalem"><Input name="timezone" defaultValue={event.timezone} /></Field>
+          <Field label="Time zone" hint="e.g. America/New_York, America/Los_Angeles, Asia/Jerusalem"><Input name="timezone" defaultValue={event.timezone} /></Field>
           <SubmitButton>Save</SubmitButton>
         </ActionForm>
       </Card>
 
-      <Card title="Events / moments">
+      <Card title="Sessions">
         <div className="space-y-4">
           {[...sessions, null].map((s) => (
             <details key={s?.id ?? "new"} open={!s && sessions.length === 0} className="rounded-lg border border-stone-200 p-3">
-              <summary className="cursor-pointer text-sm font-medium">{s ? s.name : "+ Add a moment (ceremony, reception, kiddush…)"}</summary>
+              <summary className="cursor-pointer text-sm font-medium">{s ? s.name : "+ Add a session (ceremony, reception, kiddush…)"}</summary>
               <ActionForm action={saveSession.bind(null, eventId)} className="mt-3 space-y-2">
                 <input type="hidden" name="id" value={s?.id ?? ""} />
                 <div className="grid grid-cols-2 gap-2">
                   <Field label="Name"><Input name="name" required defaultValue={s?.name} /></Field>
-                  <Field label="Date & time"><Input type="datetime-local" name="starts_at" defaultValue={toLocalInput(s?.starts_at ?? null, event.timezone)} /></Field>
+                  <Field label="Date and time"><Input type="datetime-local" name="starts_at" defaultValue={toLocalInput(s?.starts_at ?? null, event.timezone)} /></Field>
                   <Field label="Venue"><Input name="venue_name" defaultValue={s?.venue_name ?? ""} /></Field>
                   <Field label="Order"><Input type="number" name="sort" defaultValue={s?.sort ?? sessions.length} /></Field>
                 </div>
@@ -72,8 +72,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ event
           ))}
         </ul>
         <ActionForm action={addQuestion.bind(null, eventId)} className="space-y-2">
-          <Field label="Question"><Input name="label" placeholder="Which meal would you like?" /></Field>
-          <Field label="Options" hint="comma-separated; empty = free text"><Input name="options" placeholder="Beef, Fish, Vegetarian" /></Field>
+          <Field label="Question"><Input name="label" placeholder="Which entrée would you like?" /></Field>
+          <Field label="Options" hint="comma-separated; leave empty for a free-text answer"><Input name="options" placeholder="Beef, Fish, Vegetarian" /></Field>
           <SubmitButton size="sm" variant="secondary">Add</SubmitButton>
         </ActionForm>
         <p className="mt-2 text-xs text-stone-500">Dietary restrictions are always asked.</p>
@@ -82,7 +82,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ event
       <Card title="Access">
         <ul className="space-y-1 text-sm">
           {(invites ?? []).map((i) => <li key={i.email}>{i.email} · {i.role} {i.accepted_at ? "✓" : "(pending)"}</li>)}
-          <li className="text-xs text-stone-500">{members?.length ?? 0} user(s) with access. To add someone (wedding planner, family member), contact us.</li>
+          <li className="text-xs text-stone-500">{members?.length ?? 0} user(s) with access. To add someone (a wedding planner or family member), contact us.</li>
         </ul>
       </Card>
     </fieldset>

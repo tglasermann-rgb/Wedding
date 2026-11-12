@@ -4,7 +4,7 @@ import { submitRsvpAction } from "@/app/[slug]/actions";
 import type { RsvpStatus } from "@/lib/types";
 import type { RsvpData } from "./sections";
 
-const OPTIONS: { v: Exclude<RsvpStatus, "pending">; l: string }[] = [{ v: "yes", l: "Joyfully accept" }, { v: "maybe", l: "Maybe" }, { v: "no", l: "Regretfully decline" }];
+const OPTIONS: { v: Exclude<RsvpStatus, "pending">; l: string }[] = [{ v: "yes", l: "Yes, I'll be there" }, { v: "maybe", l: "Maybe" }, { v: "no", l: "Can't make it" }];
 const inp = "w-full rounded-lg border px-3 py-2 text-sm bg-white/80";
 
 export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: string; data: RsvpData; sessions: { id: string; name: string }[]; deadline: string | null; open: boolean }) {
@@ -62,7 +62,7 @@ export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: strin
           ))}
           {sessions.some((s) => statuses[`${g.id}:${s.id}`] === "yes") && (
             <div className="mt-3 space-y-2">
-              <input className={inp} placeholder="Allergies or dietary needs (optional)" value={dietary[g.id] ?? ""} onChange={(e) => setDietary((d) => ({ ...d, [g.id]: e.target.value }))} />
+              <input className={inp} placeholder="Allergies or dietary restrictions (optional)" value={dietary[g.id] ?? ""} onChange={(e) => setDietary((d) => ({ ...d, [g.id]: e.target.value }))} />
               {data.questions.map((q) => {
                 const k = `${q.id}:${g.id}`;
                 return q.kind === "select" ? (
@@ -96,8 +96,8 @@ export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: strin
           className="rounded-full px-10 py-3 text-white disabled:opacity-50" style={{ background: "var(--site-accent)" }}>
           {pending ? "Sending…" : "Send RSVP"}
         </button>
-        {!complete && <p className="mt-2 text-xs opacity-60">Please answer for every person and every event.</p>}
-        {deadline && <p className="mt-2 text-xs opacity-60">You can change your answer until {new Date(deadline + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" })}.</p>}
+        {!complete && <p className="mt-2 text-xs opacity-60">Please answer for each person and each event.</p>}
+        {deadline && <p className="mt-2 text-xs opacity-60">You can change your RSVP until {new Date(deadline + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" })}.</p>}
         {result && <p className={`mt-4 ${result.ok ? "" : "text-red-700"}`}>{result.message}</p>}
       </div>
     </div>

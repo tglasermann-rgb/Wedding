@@ -32,7 +32,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   hero: "Cover",
   countdown: "Countdown",
   text: "Text",
-  schedule: "Schedule / venues",
+  schedule: "Schedule & venues",
   gifts: "Registry",
   gallery: "Gallery",
   faq: "FAQ",

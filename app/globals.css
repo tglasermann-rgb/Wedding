@@ -1,24 +1,67 @@
 @import "tailwindcss";
 
+/*
+ * Celebra brand tokens (route A, "The Table").
+ * Aubergine ink, marigold accent, blush and olive supports, linen ground.
+ * Tailwind's stone ramp is re-tinted toward aubergine and emerald toward olive,
+ * so every existing stone-* / emerald-* utility in the app follows the brand.
+ */
 :root {
-  --background: #faf9f7;
-  --foreground: #1c1917;
-  --brand: #8b5e3c;
+  --background: #faf5ef;
+  --foreground: #2e1f3a;
+  --brand: #2e1f3a;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-brand: var(--brand);
-  --font-sans: 'Inter', system-ui, sans-serif;
+}
+
+@theme {
+  --color-aubergine: #2e1f3a;
+  --color-marigold: #f29e38;
+  --color-marigold-dark: #c97416;
+  --color-blush: #f4d6cf;
+  --color-olive: #6b7f5a;
+  --color-linen: #faf5ef;
+
+  --color-stone-50: #f8f4f2;
+  --color-stone-100: #f0eae8;
+  --color-stone-200: #e4dcdd;
+  --color-stone-300: #cfc4c9;
+  --color-stone-400: #a597a5;
+  --color-stone-500: #7b6c7e;
+  --color-stone-600: #5e4f64;
+  --color-stone-700: #46374f;
+  --color-stone-800: #382943;
+  --color-stone-900: #2e1f3a;
+  --color-stone-950: #1f1428;
+
+  --color-emerald-50: #f2f5ee;
+  --color-emerald-100: #e3eada;
+  --color-emerald-500: #6b7f5a;
+  --color-emerald-700: #4f6142;
+  --color-emerald-800: #3f4d35;
+
+  --font-sans: 'Figtree', system-ui, sans-serif;
+  --font-display: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
   --font-serif: 'Cormorant Garamond', Georgia, serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Inter', system-ui, sans-serif;
+  font-family: 'Figtree', system-ui, sans-serif;
 }
+
+/* The marigold guest takes their place in the circle. */
+@keyframes brand-seat-in {
+  from { transform: translate(14px, 10px) scale(.4); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.brand-seat-in { transform-box: fill-box; transform-origin: center; animation: brand-seat-in .9s cubic-bezier(.2, .8, .2, 1) .3s both; }
+@media (prefers-reduced-motion: reduce) { .brand-seat-in { animation: none; } }
 
 @media print {
   .no-print { display: none !important; }

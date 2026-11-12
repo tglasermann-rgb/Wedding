@@ -6,6 +6,7 @@ import { ActionForm } from "@/components/action-form";
 import { SubmitButton } from "@/components/submit-button";
 import { Badge, Card, Field, Input, Select } from "@/components/ui";
 import { createEvent, setEventStatus, updateLimits } from "./actions";
+import { AdminNav } from "./nav";
 
 export default async function AdminPage() {
   const { supabase } = await requireAdmin();
@@ -17,16 +18,13 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
-      <div className="flex items-center justify-between">
-        <h1 className="font-serif text-3xl">Super admin</h1>
-        <Link href="/dashboard" className="text-sm underline">My events</Link>
-      </div>
+      <AdminNav />
 
-      <Card title="New event (client paid)">
+      <Card title="New event (client has paid)">
         <ActionForm action={createEvent} className="grid gap-3 md:grid-cols-3">
-          <Field label="Title"><Input name="title" required placeholder="Emma & Daniel's Wedding" /></Field>
-          <Field label="Hosts"><Input name="hosts" placeholder="Emma & Daniel" /></Field>
-          <Field label="Slug (URL)" hint="celebra.app/emma-and-daniel"><Input name="slug" required pattern="[a-z0-9][a-z0-9-]+[a-z0-9]" /></Field>
+          <Field label="Title"><Input name="title" required placeholder="Anna & David’s wedding" /></Field>
+          <Field label="Hosts"><Input name="hosts" placeholder="Anna & David" /></Field>
+          <Field label="Slug (URL)" hint="getcelebra.com/anna-and-david"><Input name="slug" required pattern="[a-z0-9][a-z0-9-]+[a-z0-9]" /></Field>
           <Field label="Type"><Select name="type">{EVENT_TYPE_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}</Select></Field>
           <Field label="Date"><Input name="event_date" type="date" /></Field>
           <Field label="Owner email"><Input name="owner_email" type="email" required /></Field>

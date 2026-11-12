@@ -12,7 +12,7 @@ const NEW: Record<SectionType, () => SiteSection> = {
   hero: () => ({ id: crypto.randomUUID(), type: "hero", title: "", subtitle: "", imageUrl: "" }),
   countdown: () => ({ id: crypto.randomUUID(), type: "countdown" }),
   text: () => ({ id: crypto.randomUUID(), type: "text", title: "New section", body: "" }),
-  schedule: () => ({ id: crypto.randomUUID(), type: "schedule", title: "Programa" }),
+  schedule: () => ({ id: crypto.randomUUID(), type: "schedule", title: "Schedule" }),
   gifts: () => ({ id: crypto.randomUUID(), type: "gifts", title: "Registry", text: "", links: [] }),
   gallery: () => ({ id: crypto.randomUUID(), type: "gallery", title: "Gallery", images: [] }),
   faq: () => ({ id: crypto.randomUUID(), type: "faq", title: "FAQ", items: [] }),
@@ -86,8 +86,8 @@ export function SiteEditor({ eventId, slug, canEdit, initial }: { eventId: strin
             )}
             {sec.type === "text" && <Field label="Text"><Textarea rows={5} value={sec.body} onChange={(e) => patch(i, { body: e.target.value })} /></Field>}
             {(sec.type === "rsvp" || sec.type === "gifts") && <Field label="Text"><Textarea value={sec.text} onChange={(e) => patch(i, { text: e.target.value })} /></Field>}
-            {sec.type === "schedule" && <p className="text-sm text-stone-500">Shows the events (ceremony, reception…) set up in Settings, with time, venue and map.</p>}
-            {sec.type === "countdown" && <p className="text-sm text-stone-500">Countdown to the event date.</p>}
+            {sec.type === "schedule" && <p className="text-sm text-stone-500">Shows the sessions (ceremony, reception…) set up in Settings, with time, venue and map.</p>}
+            {sec.type === "countdown" && <p className="text-sm text-stone-500">Counts down to the event date.</p>}
             {sec.type === "gifts" && (
               <ListEditor items={sec.links} empty={{ label: "", url: "" }} onChange={(links) => patch(i, { links })}
                 render={(it, set) => (<><Input placeholder="Name (Zola, Amazon…)" value={it.label} onChange={(e) => set({ ...it, label: e.target.value })} /><Input placeholder="https://…" value={it.url} onChange={(e) => set({ ...it, url: e.target.value })} /></>)} />

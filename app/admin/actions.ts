@@ -14,7 +14,7 @@ const RESERVED = ["login", "dashboard", "admin", "api", "auth", "app", "www", "h
 const createSchema = z.object({
   title: z.string().min(2),
   hosts: z.string().optional(),
-  slug: z.string().regex(/^[a-z0-9][a-z0-9-]{1,60}[a-z0-9]$/, "Slug: lowercase letters, numbers and dashes only"),
+  slug: z.string().regex(/^[a-z0-9][a-z0-9-]{1,60}[a-z0-9]$/, "Slug: lowercase letters, numbers and hyphens only"),
   type: z.enum(["wedding", "bar_mitzvah", "bat_mitzvah", "brit_milah", "quinceanera", "generic"]),
   event_date: z.string().optional(),
   owner_email: z.string().email(),
@@ -45,7 +45,7 @@ export async function createEvent(_: ActionState, fd: FormData): Promise<ActionS
   await supabase.from("event_sites").insert({
     event_id: ev.id, theme_id: preset.defaultTheme, sections: preset.defaultSections({ title: d.title, hosts: d.hosts ?? "" }),
   });
-  await supabase.from("venue_layouts").insert({ event_id: ev.id, name: "Main hall" });
+  await supabase.from("venue_layouts").insert({ event_id: ev.id, name: "Main venue" });
   await supabase.from("message_templates").insert(DEFAULT_TEMPLATES.map((t) => ({ ...t, event_id: ev.id })));
   await supabase.from("event_invites").insert({ event_id: ev.id, email: d.owner_email.toLowerCase(), role: "owner" });
 
@@ -55,7 +55,7 @@ export async function createEvent(_: ActionState, fd: FormData): Promise<ActionS
   revalidatePath("/admin");
   return {
     ok: true,
-    message: invErr ? `Event created. ${d.owner_email} already has an account: they can log in at /login to see it.` : `Event created and invitation sent to ${d.owner_email}.`,
+    message: invErr ? `Event created. ${d.owner_email} already has an account: they can log in at /login to see the event.` : `Event created and invitation sent to ${d.owner_email}.`,
   };
 }
 

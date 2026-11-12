@@ -15,7 +15,7 @@ const baseSections = (heroTitle: string, heroSubtitle: string, extra: SiteSectio
   { id: "countdown", type: "countdown" },
   ...extra,
   { id: "schedule", type: "schedule", title: "Schedule" },
-  { id: "rsvp", type: "rsvp", title: "RSVP", text: "We would love to celebrate with you." },
+  { id: "rsvp", type: "rsvp", title: "RSVP", text: "We'd love to celebrate with you." },
   { id: "faq", type: "faq", title: "FAQ", items: [] },
 ];
 
@@ -38,7 +38,7 @@ export const EVENT_TYPES: Record<EventType, EventTypePreset> = {
     type: "bar_mitzvah",
     label: "Bar Mitzvah",
     hostsLabel: "Family",
-    defaultSessions: ["Torah reading", "Party"],
+    defaultSessions: ["Torah Service", "Party"],
     defaultTheme: "modern",
     defaultSections: ({ title, hosts }) =>
       baseSections(title, hosts ? `With love, ${hosts}` : "Join us to celebrate", [
@@ -75,7 +75,7 @@ export const EVENT_TYPES: Record<EventType, EventTypePreset> = {
     defaultTheme: "modern",
     defaultSections: ({ title, hosts }) =>
       baseSections(hosts || title, "My Quinceañera", [
-        { id: "gifts", type: "gifts", title: "Gifts", text: "", links: [] },
+        { id: "gifts", type: "gifts", title: "Registry", text: "", links: [] },
         { id: "gallery", type: "gallery", title: "Gallery", images: [] },
       ]),
   },

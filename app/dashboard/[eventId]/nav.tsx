@@ -14,7 +14,7 @@ export function EventNav({ eventId }: { eventId: string }) {
       {TABS.map(([href, label]) => {
         const active = href === "" ? path === base : path.startsWith(base + href);
         return (
-          <Link key={href} href={base + href} className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm ${active ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-100"}`}>
+          <Link key={href} href={base + href} className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm ${active ? "bg-aubergine font-medium text-linen" : "text-stone-600 hover:bg-stone-100"}`}>
             {label}
           </Link>
         );

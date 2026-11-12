@@ -30,6 +30,6 @@ export async function requireEvent(eventId: string, opts: { edit?: boolean } = {
   const { data: role } = await supabase.rpc("event_role", { eid: eventId });
   const admin = await isPlatformAdmin();
   const canEdit = admin || role === "owner" || role === "editor";
-  if (opts.edit && !canEdit) throw new Error("You don't have permission to edit this event.");
+  if (opts.edit && !canEdit) throw new Error("You don’t have permission to edit this event.");
   return { supabase, user, event, role: (role as MemberRole | null) ?? (admin ? "owner" : "viewer"), canEdit };
 }

@@ -27,16 +27,16 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
     <div className="space-y-6">
       {canEdit && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card title="Add invitation">
+          <Card title="Add a household">
             <ActionForm action={addHousehold.bind(null, eventId)} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Invitation name"><Input name="name" placeholder="The Smith Family" /></Field>
+                <Field label="Household name"><Input name="name" placeholder="The Smith family" /></Field>
                 <Field label="Guest of"><Input name="side" placeholder="bride / groom" /></Field>
                 <Field label="Tags" hint="comma-separated"><Input name="tags" placeholder="family, work" /></Field>
                 <Field label="Plus-ones allowed"><Input name="max_plus_ones" type="number" min={0} defaultValue={0} /></Field>
               </div>
               <Field label="People" hint="One per line: First Last, email, phone, child">
-                <Textarea name="members" required placeholder={"John Smith, john@mail.com, (212) 555-0142\nLucy Smith, child"} />
+                <Textarea name="members" required placeholder={"John Smith, john@mail.com, (415) 555-2671\nLily Smith, child"} />
               </Field>
               <SubmitButton>Add</SubmitButton>
             </ActionForm>

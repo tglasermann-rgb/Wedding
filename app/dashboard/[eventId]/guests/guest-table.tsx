@@ -48,7 +48,7 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
 
   function exportCsv() {
     const data = rows.map((g) => ({
-      household: g.household.name, first_name: g.first_name, last_name: g.last_name ?? "", email: g.email ?? "", phone: g.phone ?? "",
+      household: g.household.name, "first name": g.first_name, "last name": g.last_name ?? "", email: g.email ?? "", phone: g.phone ?? "",
       side: g.household.side ?? "", tags: g.household.tags.join(", "), child: g.is_child ? "yes" : "", dietary: g.dietary ?? "",
       ...Object.fromEntries(sessions.map((s) => [s.name, RSVP_LABELS[g.rsvps.find((r) => r.session_id === s.id)?.status ?? "pending"]])),
       link: rsvpBase + g.household.token,
@@ -89,7 +89,7 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
         <table className="w-full min-w-[900px] text-sm">
           <thead className="text-left text-xs uppercase text-stone-500">
             <tr>
-              <th className="py-2">Invitation</th><th>Name</th><th>Email</th><th>WhatsApp</th>
+              <th className="py-2">Household</th><th>Name</th><th>Email</th><th>WhatsApp</th>
               {sessions.map((s) => <th key={s.id}>{s.name}</th>)}
               <th>Messages</th><th></th>
             </tr>
@@ -134,14 +134,14 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
                     {copied === g.id ? "Copied!" : "Link"}
                   </Button>
                   {canEdit && (
-                    <Button size="sm" variant="danger" onClick={() => confirm(`Delete ${g.first_name}?`) && start(() => deleteGuest(eventId, g.id))}>✕</Button>
+                    <Button size="sm" variant="danger" onClick={() => confirm(`Remove ${g.first_name}?`) && start(() => deleteGuest(eventId, g.id))}>✕</Button>
                   )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {rows.length === 0 && <p className="py-8 text-center text-sm text-stone-500">No matching guests.</p>}
+        {rows.length === 0 && <p className="py-8 text-center text-sm text-stone-500">No guests match.</p>}
       </div>
     </Card>
   );

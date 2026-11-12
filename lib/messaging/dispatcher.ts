@@ -26,14 +26,14 @@ export async function enqueue(
   const { data: tpl } = await sb.from("message_templates").select("*").eq("id", p.templateId).single<TemplateRow>();
   const { data: event } = await sb.from("events").select("*").eq("id", p.eventId).single<EventRow>();
   if (!tpl || !event) throw new Error("Template or event not found");
-  if (event.status !== "active") throw new Error("This event is not active yet. Ask support to activate it.");
+  if (event.status !== "active") throw new Error("This event isn't active yet. Ask support to activate it.");
 
   const guests = await loadGuests(sb, p.eventId);
   const { recipients, skippedNoContact } = resolveAudience(guests, p.audience, tpl.channel);
 
   const { count: used } = await sb.from("messages").select("id", { count: "exact", head: true }).eq("event_id", p.eventId);
   const remaining = (event.limits?.max_messages ?? 0) - (used ?? 0);
-  if (recipients.length > remaining) throw new Error(`Not enough message quota (${Math.max(remaining, 0)} left).`);
+  if (recipients.length > remaining) throw new Error(`Not enough message credits left (${Math.max(remaining, 0)} remaining).`);
 
   if (recipients.length) {
     const { error } = await sb.from("messages").insert(
@@ -81,7 +81,7 @@ export async function dispatchQueued(sb: SupabaseClient, batch = 50) {
       if (event && tpl) cache.set(key, { event, tpl });
     }
     const ctx = cache.get(key);
-    if (!ctx) { await sb.from("messages").update({ status: "failed", error: "Template deleted" }).eq("id", m.id); failed++; continue; }
+    if (!ctx) { await sb.from("messages").update({ status: "failed", error: "Template was deleted" }).eq("id", m.id); failed++; continue; }
 
     const vars = await varsFor(sb, m, ctx.event);
     const body = renderTemplate(ctx.tpl.body, vars);

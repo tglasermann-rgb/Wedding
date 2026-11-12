@@ -133,7 +133,7 @@ export function SeatingEditor({ eventId, layout, canEdit, guests, initialTables,
       case "over_capacity": return `${tl(w.tableId)}: ${w.seated} people for ${w.capacity} seats`;
       case "household_split": return `${guests.find((g) => g.householdId === w.householdId)?.household} is split across ${w.tableIds.map(tl).join(" and ")}`;
       case "together_violated": return `${gn(c(w.constraintId)!.guest_a)} and ${gn(c(w.constraintId)!.guest_b)} should sit together`;
-      case "apart_violated": return `${gn(c(w.constraintId)!.guest_a)} and ${gn(c(w.constraintId)!.guest_b)} shouldn't share ${tl(w.tableId)}`;
+      case "apart_violated": return `${gn(c(w.constraintId)!.guest_a)} and ${gn(c(w.constraintId)!.guest_b)} shouldn’t share ${tl(w.tableId)}`;
     }
   };
 
@@ -243,7 +243,7 @@ export function SeatingEditor({ eventId, layout, canEdit, guests, initialTables,
               onBlur={(e) => patchTable(table.id, { label: e.target.value || "Table" })} />
             <div className="grid grid-cols-2 gap-2">
               <Select value={table.shape} disabled={!canEdit} onChange={(e) => patchTable(table.id, { shape: e.target.value as TableShape })}>
-                <option value="round">Round</option><option value="square">Square</option><option value="rect">Rectangle</option>
+                <option value="round">Round</option><option value="square">Square</option><option value="rect">Banquet</option>
               </Select>
               <Input type="number" min={1} max={40} value={table.capacity} disabled={!canEdit} onChange={(e) => patchTable(table.id, { capacity: Math.max(1, Math.min(40, Number(e.target.value) || 1)) })} />
             </div>
@@ -293,7 +293,7 @@ function ConstraintForm({ guest, guests, onAdd }: { guest: EditorGuest; guests: 
   return (
     <div className="mt-3 space-y-1 border-t border-stone-100 pt-2">
       <div className="text-xs font-medium">Rule</div>
-      <Select value={kind} onChange={(e) => setKind(e.target.value as "together" | "apart")}><option value="together">Seat with</option><option value="apart">Seat away from</option></Select>
+      <Select value={kind} onChange={(e) => setKind(e.target.value as "together" | "apart")}><option value="together">Keep together with</option><option value="apart">Keep apart from</option></Select>
       <Select value={other} onChange={(e) => setOther(e.target.value)}>
         <option value="">Choose a person…</option>
         {guests.filter((g) => g.id !== guest.id).sort((a, b) => a.name.localeCompare(b.name)).map((g) => <option key={g.id} value={g.id}>{g.name}</option>)}

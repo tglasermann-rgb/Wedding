@@ -69,7 +69,7 @@ export async function createCampaign(eventId: string, _: ActionState, fd: FormDa
     revalidatePath(path(eventId));
     return {
       ok: true,
-      message: `${r.queued} messages queued, ${d.sent} already sent${r.skippedNoContact ? `; ${r.skippedNoContact} have no contact for this channel` : ""}. The rest go out over the next few minutes.`,
+      message: `${r.queued} messages queued, ${d.sent} sent so far${r.skippedNoContact ? `; ${r.skippedNoContact} with no contact for this channel` : ""}. The rest will go out in the next few minutes.`,
     };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
@@ -103,7 +103,7 @@ export async function createAutomation(eventId: string, _: ActionState, fd: Form
     });
     if (error) throw error;
     revalidatePath(path(eventId));
-    return { ok: true, message: "Automation created." };
+    return { ok: true, message: "Automatic reminder created." };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }

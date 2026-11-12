@@ -9,7 +9,7 @@ function daysUntil(date: string | null) {
 }
 
 const COLORS: Record<RsvpStatus, string> = { yes: "bg-emerald-500", maybe: "bg-amber-400", no: "bg-red-400", pending: "bg-stone-300" };
-const LABEL: Record<RsvpStatus, string> = { yes: "Yes", maybe: "Maybe", no: "No", pending: "Pending" };
+const LABEL: Record<RsvpStatus, string> = { yes: "Attending", maybe: "Maybe", no: "Declined", pending: "Pending" };
 
 function StackBar({ counts, total }: { counts: Record<RsvpStatus, number>; total: number }) {
   return (
@@ -57,22 +57,22 @@ export default async function Overview({ params }: { params: Promise<{ eventId: 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Stat label="Countdown" value={days === null ? "—" : days >= 0 ? days : "Done!"} sub={days !== null && days >= 0 ? "days to go" : event.event_date ?? "Set the date in Settings"} />
-        <Stat label="Guests" value={s.guests} sub={`${s.households} invitations · ${s.adults} adults · ${s.children} kids`} />
+        <Stat label="Countdown" value={days === null ? "—" : days >= 0 ? days : "Done!"} sub={days !== null && days >= 0 ? (days === 1 ? "day to go" : "days to go") : event.event_date ?? "Set the date in Settings"} />
+        <Stat label="Guests" value={s.guests} sub={`${s.households} households · ${s.adults} adults · ${s.children} children`} />
         <Stat label="Attending" value={s.byStatus.yes} tone="green" sub={`${Math.round((s.byStatus.yes / Math.max(s.guests, 1)) * 100)}%`} />
         <Stat label="Maybe" value={s.byStatus.maybe} tone="amber" />
-        <Stat label="Pending" value={s.byStatus.pending} sub={`${s.byStatus.no} not attending`} />
+        <Stat label="Pending" value={s.byStatus.pending} sub={`${s.byStatus.no} declined`} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card title="RSVPs by event" className="lg:col-span-2">
+        <Card title="RSVPs by session" className="lg:col-span-2">
           <div className="space-y-5">
             <div><div className="mb-2 text-sm font-medium">Overall</div><StackBar counts={s.byStatus} total={s.guests} /></div>
             {s.bySession.map((b) => (
               <div key={b.session.id}>
                 <div className="mb-2 flex justify-between text-sm">
                   <span className="font-medium">{b.session.name}</span>
-                  <span className="text-stone-500">{b.attendingAdults} adults · {b.attendingChildren} kids attending</span>
+                  <span className="text-stone-500">{b.attendingAdults} adults · {b.attendingChildren} children attending</span>
                 </div>
                 <StackBar counts={b.byStatus} total={s.guests} />
               </div>
@@ -81,13 +81,13 @@ export default async function Overview({ params }: { params: Promise<{ eventId: 
         </Card>
         <Card title="Needs attention">
           <ul className="space-y-2 text-sm">
-            <li>{s.noContact} guests without email or phone</li>
-            <li>{s.byStatus.pending} guests haven&apos;t replied yet</li>
+            <li>{s.noContact} guests with no email or phone</li>
+            <li>{s.byStatus.pending} guests haven’t replied yet</li>
             <li>{s.messages.reduce((a, m) => a + m.failed, 0)} failed messages</li>
           </ul>
           {s.dietary.length > 0 && (
             <>
-              <h3 className="mt-5 mb-2 text-sm font-semibold">Dietary needs / allergies</h3>
+              <h3 className="mt-5 mb-2 text-sm font-semibold">Dietary restrictions / allergies</h3>
               <ul className="max-h-48 space-y-1 overflow-auto text-sm">{s.dietary.map((d, i) => <li key={i}><b>{d.name}:</b> {d.value}</li>)}</ul>
             </>
           )}

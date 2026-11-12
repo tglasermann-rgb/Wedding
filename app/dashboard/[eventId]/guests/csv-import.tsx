@@ -18,7 +18,7 @@ export function CsvImport({ eventId }: { eventId: string }) {
   return (
     <div className="space-y-3 text-sm">
       <p className="text-stone-600">
-        Recognized columns: <b>household</b>, <b>first name</b>, last name, email, phone, side, tags, child, plus ones. From Excel: “Save As → CSV”.
+        Recognized columns: <b>household</b>, <b>first name</b>, last name, email, phone, side, tags, child, plus ones. From Excel, use “Save as CSV”.
       </p>
       <input type="file" accept=".csv,text/csv" onChange={(e) => e.target.files?.[0] && onFile(e.target.files[0])} />
       {res && (

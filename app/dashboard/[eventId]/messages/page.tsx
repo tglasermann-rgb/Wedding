@@ -46,7 +46,7 @@ export default async function MessagesPage({ params, searchParams }: { params: P
                   <Field label="Send name"><Input name="name" placeholder="First invitation" /></Field>
                 </div>
                 <AudienceFields sessions={sessions} />
-                <Field label="Schedule (optional)" hint="Empty = send now"><Input type="datetime-local" name="scheduled_at" /></Field>
+                <Field label="Schedule (optional)" hint="Leave empty to send now"><Input type="datetime-local" name="scheduled_at" /></Field>
                 <SubmitButton pendingText="Sending…">Send</SubmitButton>
               </ActionForm>
             )}
@@ -56,9 +56,9 @@ export default async function MessagesPage({ params, searchParams }: { params: P
             <ul className="mb-4 space-y-2 text-sm">
               {(automations ?? []).map((a) => (
                 <li key={a.id} className="flex items-center justify-between rounded-lg border border-stone-200 p-2">
-                  <span><b>{a.name}</b> — {a.days_before} days before · {a.template?.name}{a.last_run_at && <span className="text-xs text-stone-500"> (ran {fmt(a.last_run_at)})</span>}</span>
+                  <span><b>{a.name}</b> — {a.days_before} days before · {a.template?.name}{a.last_run_at && <span className="text-xs text-stone-500"> (last ran {fmt(a.last_run_at)})</span>}</span>
                   <form action={toggleAutomation.bind(null, eventId, a.id, !a.enabled)}>
-                    <button className="text-xs underline">{a.enabled ? "Pause" : "Resume"}</button>
+                    <button className="text-xs underline">{a.enabled ? "Pause" : "Turn on"}</button>
                   </form>
                 </li>
               ))}
@@ -71,7 +71,7 @@ export default async function MessagesPage({ params, searchParams }: { params: P
                   <Field label="Template"><Select name="templateId">{tpls.map((t) => <option key={t.id} value={t.id}>{t.channel === "email" ? "✉" : "WA"} · {t.name}</option>)}</Select></Field>
                 </div>
                 <AudienceFields sessions={sessions} defaultRsvp={["pending", "maybe"]} />
-                <SubmitButton variant="secondary">Create automation</SubmitButton>
+                <SubmitButton variant="secondary">Create reminder</SubmitButton>
               </ActionForm>
             )}
           </Card>
@@ -94,7 +94,7 @@ export default async function MessagesPage({ params, searchParams }: { params: P
           )}
         </div>
         <p className="mt-3 text-xs text-stone-500">
-          Variables: {AVAILABLE_VARS.map((v) => `{{${v}}}`).join(" ")}. For WhatsApp, the template approved in Meta must use {"{{1}}, {{2}}…"} in the same order the variables appear here, plus quick-reply buttons “Yes / No / Maybe”.
+          Variables: {AVAILABLE_VARS.map((v) => `{{${v}}}`).join(" ")}. For WhatsApp, the template approved in Meta must use {"{{1}}, {{2}}…"} in the same order the variables appear here, with “Yes / No / Maybe” quick-reply buttons.
         </p>
       </Card>
 
@@ -151,7 +151,7 @@ export default async function MessagesPage({ params, searchParams }: { params: P
               })}
             </tbody>
           </table>
-          {(messages ?? []).length === 0 && <p className="py-6 text-center text-sm text-stone-500">No messages.</p>}
+          {(messages ?? []).length === 0 && <p className="py-6 text-center text-sm text-stone-500">No messages yet.</p>}
         </div>
       </Card>
     </div>

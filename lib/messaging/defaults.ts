@@ -4,7 +4,7 @@ export const DEFAULT_TEMPLATES = [
     channel: "email" as const,
     name: "Invitation",
     subject: "{{hosts}} — You're invited!",
-    body: "Hi {{first_name}},\n\nWe would love for you to join us at {{event_title}} on {{event_date}}.\n\nAll the details, and your personal RSVP, are on our website.",
+    body: "Hi {{first_name}},\n\nWe'd love for you to join us at {{event_title}} on {{event_date}}.\n\nEverything you need to know, and your RSVP, is on our page.",
   },
   {
     channel: "email" as const,

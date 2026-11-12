@@ -39,11 +39,11 @@ export function validateRsvp(sub: RsvpSubmission, ctx: RsvpContext): RsvpError |
 
 /** Interpret a free-text / button reply (WhatsApp, email) as an RSVP status. */
 export function parseReply(text: string): RsvpStatus | "stop" | null {
-  const t = text.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[!¡.¿?]/g, "");
-  if (["stop", "unsubscribe", "stop messages", "baja"].includes(t)) return "stop";
-  if (["yes", "y", "yep", "sure", "attending", "i will attend", "count me in", "si", "rsvp_yes"].includes(t)) return "yes";
-  if (["no", "n", "nope", "cant", "can't", "cannot", "not attending", "rsvp_no"].includes(t)) return "no";
-  if (["maybe", "perhaps", "not sure", "tal vez", "rsvp_maybe"].includes(t)) return "maybe";
+  const t = text.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[!¡.¿?,'’]/g, "").replace(/\s+/g, " ");
+  if (["stop", "unsubscribe", "opt out", "baja", "alto", "cancelar suscripcion"].includes(t)) return "stop";
+  if (["yes", "y", "yes ill be there", "ill be there", "count me in", "attending", "accept", "joyfully accepts", "im in", "rsvp_yes", "si", "confirmo", "si voy", "asistire", "si asistire", "claro"].includes(t)) return "yes";
+  if (["no", "n", "cant make it", "cannot make it", "not attending", "decline", "regretfully declines", "rsvp_no", "no puedo", "no voy", "no asistire"].includes(t)) return "no";
+  if (["maybe", "not sure", "not sure yet", "perhaps", "rsvp_maybe", "tal vez", "talvez", "quiza", "quizas", "no se"].includes(t)) return "maybe";
   return null;
 }
 
