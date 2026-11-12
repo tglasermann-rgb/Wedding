@@ -67,12 +67,12 @@ export function seatPositions(shape: TableShape, capacity: number): Point[] {
 }
 
 export const TABLE_PRESETS: { label: string; shape: TableShape; capacity: number }[] = [
-  { label: "Redonda 8", shape: "round", capacity: 8 },
-  { label: "Redonda 10", shape: "round", capacity: 10 },
-  { label: "Redonda 12", shape: "round", capacity: 12 },
-  { label: "Cuadrada 4", shape: "square", capacity: 4 },
-  { label: "Cuadrada 8", shape: "square", capacity: 8 },
-  { label: "Rectangular 6", shape: "rect", capacity: 6 },
-  { label: "Rectangular 10", shape: "rect", capacity: 10 },
-  { label: "Imperial 20", shape: "rect", capacity: 20 },
+  { label: "Round 8", shape: "round", capacity: 8 },
+  { label: "Round 10", shape: "round", capacity: 10 },
+  { label: "Round 12", shape: "round", capacity: 12 },
+  { label: "Square 4", shape: "square", capacity: 4 },
+  { label: "Square 8", shape: "square", capacity: 8 },
+  { label: "Rectangle 6", shape: "rect", capacity: 6 },
+  { label: "Rectangle 10", shape: "rect", capacity: 10 },
+  { label: "Banquet 20", shape: "rect", capacity: 20 },
 ];

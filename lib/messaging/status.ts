@@ -12,8 +12,8 @@ export function nextStatus(current: MessageStatus, incoming: MessageStatus): Mes
 }
 
 export const STATUS_LABELS: Record<MessageStatus, string> = {
-  queued: "En cola", sending: "Enviando", sent: "Enviado", delivered: "Entregado", opened: "Abierto", read: "Leído",
-  clicked: "Click", replied: "Respondió", failed: "Falló", bounced: "Rebotó", skipped: "Omitido",
+  queued: "Queued", sending: "Sending", sent: "Sent", delivered: "Delivered", opened: "Opened", read: "Read",
+  clicked: "Clicked", replied: "Replied", failed: "Failed", bounced: "Bounced", skipped: "Skipped",
 };
 
 /** Timestamp column to set when a status is reached. */

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  ["", "Resumen"], ["/guests", "Invitados"], ["/messages", "Mensajes"], ["/seating", "Mesas"], ["/site", "Página"], ["/settings", "Ajustes"],
+  ["", "Overview"], ["/guests", "Guests"], ["/messages", "Messages"], ["/seating", "Seating"], ["/site", "Website"], ["/settings", "Settings"],
 ] as const;
 
 export function EventNav({ eventId }: { eventId: string }) {

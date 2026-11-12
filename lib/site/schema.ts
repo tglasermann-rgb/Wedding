@@ -29,14 +29,14 @@ export type SiteSection = z.infer<typeof sectionSchema>;
 export type SectionType = SiteSection["type"];
 
 export const SECTION_LABELS: Record<SectionType, string> = {
-  hero: "Portada",
-  countdown: "Cuenta regresiva",
-  text: "Texto",
-  schedule: "Programa / lugares",
-  gifts: "Regalos",
-  gallery: "Galería",
-  faq: "Preguntas frecuentes",
-  rsvp: "Confirmación (RSVP)",
+  hero: "Cover",
+  countdown: "Countdown",
+  text: "Text",
+  schedule: "Schedule / venues",
+  gifts: "Registry",
+  gallery: "Gallery",
+  faq: "FAQ",
+  rsvp: "RSVP",
 };
 
 export function parseSections(raw: unknown): SiteSection[] {

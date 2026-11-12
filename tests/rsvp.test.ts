@@ -23,6 +23,6 @@ describe("validateRsvp", () => {
 
 describe("parseReply", () => {
   it.each([
-    ["Sí", "yes"], ["si!", "yes"], ["RSVP_YES", "yes"], ["No", "no"], ["Tal vez", "maybe"], ["quizás", "maybe"], ["STOP", "stop"], ["hola", null],
+    ["Yes", "yes"], ["yes!", "yes"], ["RSVP_YES", "yes"], ["No", "no"], ["can't", "no"], ["Maybe", "maybe"], ["not sure", "maybe"], ["STOP", "stop"], ["hello", null],
   ])("%s -> %s", (input, out) => expect(parseReply(input)).toBe(out));
 });

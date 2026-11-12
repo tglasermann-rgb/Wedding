@@ -9,7 +9,7 @@ function daysUntil(date: string | null) {
 }
 
 const COLORS: Record<RsvpStatus, string> = { yes: "bg-emerald-500", maybe: "bg-amber-400", no: "bg-red-400", pending: "bg-stone-300" };
-const LABEL: Record<RsvpStatus, string> = { yes: "Sí", maybe: "Tal vez", no: "No", pending: "Pendiente" };
+const LABEL: Record<RsvpStatus, string> = { yes: "Yes", maybe: "Maybe", no: "No", pending: "Pending" };
 
 function StackBar({ counts, total }: { counts: Record<RsvpStatus, number>; total: number }) {
   return (
@@ -57,37 +57,37 @@ export default async function Overview({ params }: { params: Promise<{ eventId: 
   return (
     <div className="space-y-6">
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Stat label="Faltan" value={days === null ? "—" : days >= 0 ? days : "¡Pasó!"} sub={days !== null && days >= 0 ? "días" : event.event_date ?? "Define la fecha en Ajustes"} />
-        <Stat label="Invitados" value={s.guests} sub={`${s.households} invitaciones · ${s.adults} adultos · ${s.children} niños`} />
-        <Stat label="Confirmados" value={s.byStatus.yes} tone="green" sub={`${Math.round((s.byStatus.yes / Math.max(s.guests, 1)) * 100)}%`} />
-        <Stat label="Tal vez" value={s.byStatus.maybe} tone="amber" />
-        <Stat label="Pendientes" value={s.byStatus.pending} sub={`${s.byStatus.no} no asistirán`} />
+        <Stat label="Countdown" value={days === null ? "—" : days >= 0 ? days : "Done!"} sub={days !== null && days >= 0 ? "days to go" : event.event_date ?? "Set the date in Settings"} />
+        <Stat label="Guests" value={s.guests} sub={`${s.households} invitations · ${s.adults} adults · ${s.children} kids`} />
+        <Stat label="Attending" value={s.byStatus.yes} tone="green" sub={`${Math.round((s.byStatus.yes / Math.max(s.guests, 1)) * 100)}%`} />
+        <Stat label="Maybe" value={s.byStatus.maybe} tone="amber" />
+        <Stat label="Pending" value={s.byStatus.pending} sub={`${s.byStatus.no} not attending`} />
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        <Card title="Confirmaciones por evento" className="lg:col-span-2">
+        <Card title="RSVPs by event" className="lg:col-span-2">
           <div className="space-y-5">
-            <div><div className="mb-2 text-sm font-medium">General</div><StackBar counts={s.byStatus} total={s.guests} /></div>
+            <div><div className="mb-2 text-sm font-medium">Overall</div><StackBar counts={s.byStatus} total={s.guests} /></div>
             {s.bySession.map((b) => (
               <div key={b.session.id}>
                 <div className="mb-2 flex justify-between text-sm">
                   <span className="font-medium">{b.session.name}</span>
-                  <span className="text-stone-500">{b.attendingAdults} adultos · {b.attendingChildren} niños asistirán</span>
+                  <span className="text-stone-500">{b.attendingAdults} adults · {b.attendingChildren} kids attending</span>
                 </div>
                 <StackBar counts={b.byStatus} total={s.guests} />
               </div>
             ))}
           </div>
         </Card>
-        <Card title="Atención">
+        <Card title="Needs attention">
           <ul className="space-y-2 text-sm">
-            <li>{s.noContact} invitados sin email ni teléfono</li>
-            <li>{s.byStatus.pending} invitados aún sin responder</li>
-            <li>{s.messages.reduce((a, m) => a + m.failed, 0)} mensajes fallidos</li>
+            <li>{s.noContact} guests without email or phone</li>
+            <li>{s.byStatus.pending} guests haven&apos;t replied yet</li>
+            <li>{s.messages.reduce((a, m) => a + m.failed, 0)} failed messages</li>
           </ul>
           {s.dietary.length > 0 && (
             <>
-              <h3 className="mt-5 mb-2 text-sm font-semibold">Dietas / alergias</h3>
+              <h3 className="mt-5 mb-2 text-sm font-semibold">Dietary needs / allergies</h3>
               <ul className="max-h-48 space-y-1 overflow-auto text-sm">{s.dietary.map((d, i) => <li key={i}><b>{d.name}:</b> {d.value}</li>)}</ul>
             </>
           )}
@@ -97,8 +97,8 @@ export default async function Overview({ params }: { params: Promise<{ eventId: 
       <div className="grid gap-6 md:grid-cols-2">
         {s.messages.map((m) => (
           <Card key={m.channel} title={m.channel === "email" ? "Email" : "WhatsApp"}>
-            {m.total === 0 ? <p className="text-sm text-stone-500">Aún no se han enviado mensajes.</p> : (
-              <Funnel steps={[["Enviados", m.sent], ["Entregados", m.delivered], [m.channel === "email" ? "Abiertos" : "Leídos", m.opened], ["Respondieron", m.replied], ["Fallaron", m.failed]]} />
+            {m.total === 0 ? <p className="text-sm text-stone-500">No messages sent yet.</p> : (
+              <Funnel steps={[["Sent", m.sent], ["Delivered", m.delivered], [m.channel === "email" ? "Opened" : "Read", m.opened], ["Replied", m.replied], ["Failed", m.failed]]} />
             )}
           </Card>
         ))}

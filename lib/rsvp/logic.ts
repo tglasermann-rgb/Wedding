@@ -40,11 +40,11 @@ export function validateRsvp(sub: RsvpSubmission, ctx: RsvpContext): RsvpError |
 /** Interpret a free-text / button reply (WhatsApp, email) as an RSVP status. */
 export function parseReply(text: string): RsvpStatus | "stop" | null {
   const t = text.trim().toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[!¡.¿?]/g, "");
-  if (["stop", "baja", "alto", "cancelar suscripcion", "unsubscribe"].includes(t)) return "stop";
-  if (["si", "yes", "confirmo", "si voy", "asistire", "si asistire", "claro", "rsvp_yes"].includes(t)) return "yes";
-  if (["no", "no puedo", "no voy", "no asistire", "rsvp_no"].includes(t)) return "no";
-  if (["tal vez", "talvez", "quiza", "quizas", "maybe", "no se", "rsvp_maybe"].includes(t)) return "maybe";
+  if (["stop", "unsubscribe", "stop messages", "baja"].includes(t)) return "stop";
+  if (["yes", "y", "yep", "sure", "attending", "i will attend", "count me in", "si", "rsvp_yes"].includes(t)) return "yes";
+  if (["no", "n", "nope", "cant", "can't", "cannot", "not attending", "rsvp_no"].includes(t)) return "no";
+  if (["maybe", "perhaps", "not sure", "tal vez", "rsvp_maybe"].includes(t)) return "maybe";
   return null;
 }
 
-export const RSVP_LABELS: Record<RsvpStatus, string> = { pending: "Pendiente", yes: "Sí", no: "No", maybe: "Tal vez" };
+export const RSVP_LABELS: Record<RsvpStatus, string> = { pending: "Pending", yes: "Yes", no: "No", maybe: "Maybe" };

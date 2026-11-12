@@ -9,10 +9,10 @@ const path = (id: string) => `/dashboard/${id}/guests`;
 
 async function checkGuestLimit(sb: Awaited<ReturnType<typeof requireEvent>>["supabase"], eventId: string, max: number, adding: number) {
   const { count } = await sb.from("guests").select("id", { count: "exact", head: true }).eq("event_id", eventId);
-  if ((count ?? 0) + adding > max) throw new Error(`Tu plan permite ${max} invitados (tienes ${count}).`);
+  if ((count ?? 0) + adding > max) throw new Error(`Your plan allows ${max} guests (you have ${count}).`);
 }
 
-/** Members textarea: one per line "Nombre Apellido, email, teléfono" (email/phone optional, any order). */
+/** Members textarea: one per line "First Last, email, phone" (email/phone optional, any order). */
 function parseMembers(text: string) {
   return text.split("\n").map((l) => l.trim()).filter(Boolean).map((line) => {
     const parts = line.split(",").map((s) => s.trim());
@@ -20,7 +20,7 @@ function parseMembers(text: string) {
     const [first, ...last] = name.split(/\s+/);
     const email = rest.find((r) => r.includes("@")) ?? null;
     const phoneRaw = rest.find((r) => !r.includes("@") && /\d/.test(r));
-    const child = rest.some((r) => /^(niño|nino|niña|child)$/i.test(r));
+    const child = rest.some((r) => /^(child|kid|niño|nino|niña)$/i.test(r));
     return { first_name: first, last_name: last.join(" ") || null, email: email?.toLowerCase() ?? null, phone: normalizePhone(phoneRaw), is_child: child };
   });
 }
@@ -29,7 +29,7 @@ export async function addHousehold(eventId: string, _: ActionState, fd: FormData
   try {
     const { supabase, event } = await requireEvent(eventId, { edit: true });
     const members = parseMembers(String(fd.get("members") ?? ""));
-    if (!members.length) return { ok: false, message: "Agrega al menos una persona." };
+    if (!members.length) return { ok: false, message: "Add at least one person." };
     await checkGuestLimit(supabase, eventId, event.limits.max_guests, members.length);
     const name = String(fd.get("name") || `${members[0].first_name} ${members[0].last_name ?? ""}`).trim();
     const { data: hh, error } = await supabase.from("households").insert({
@@ -41,7 +41,7 @@ export async function addHousehold(eventId: string, _: ActionState, fd: FormData
     const { error: gErr } = await supabase.from("guests").insert(members.map((m) => ({ ...m, event_id: eventId, household_id: hh.id })));
     if (gErr) throw gErr;
     revalidatePath(path(eventId));
-    return { ok: true, message: `Invitación "${name}" agregada (${members.length}).` };
+    return { ok: true, message: `Invitation "${name}" added (${members.length}).` };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }
@@ -69,7 +69,7 @@ export async function importGuests(eventId: string, rows: ImportRow[]): Promise<
       guests += h.guests.length;
     }
     revalidatePath(path(eventId));
-    return { ok: true, message: `Importados ${guests} invitados en ${created} invitaciones nuevas.` };
+    return { ok: true, message: `Imported ${guests} guests into ${created} new invitations.` };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }
@@ -92,7 +92,7 @@ export async function updateGuest(eventId: string, input: z.input<typeof guestUp
   const { id, ...patch } = p.data;
   if (patch.phone !== undefined) {
     const n = patch.phone ? normalizePhone(patch.phone) : null;
-    if (patch.phone && !n) return { ok: false, message: "Teléfono inválido" };
+    if (patch.phone && !n) return { ok: false, message: "Invalid phone number" };
     patch.phone = n;
   }
   const { error } = await supabase.from("guests").update(patch).eq("id", id).eq("event_id", eventId);

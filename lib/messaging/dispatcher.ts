@@ -25,15 +25,15 @@ export async function enqueue(
 ) {
   const { data: tpl } = await sb.from("message_templates").select("*").eq("id", p.templateId).single<TemplateRow>();
   const { data: event } = await sb.from("events").select("*").eq("id", p.eventId).single<EventRow>();
-  if (!tpl || !event) throw new Error("Plantilla o evento no encontrado");
-  if (event.status !== "active") throw new Error("El evento no está activo. Pide a soporte que lo active.");
+  if (!tpl || !event) throw new Error("Template or event not found");
+  if (event.status !== "active") throw new Error("This event is not active yet. Ask support to activate it.");
 
   const guests = await loadGuests(sb, p.eventId);
   const { recipients, skippedNoContact } = resolveAudience(guests, p.audience, tpl.channel);
 
   const { count: used } = await sb.from("messages").select("id", { count: "exact", head: true }).eq("event_id", p.eventId);
   const remaining = (event.limits?.max_messages ?? 0) - (used ?? 0);
-  if (recipients.length > remaining) throw new Error(`Cuota de mensajes insuficiente (quedan ${Math.max(remaining, 0)}).`);
+  if (recipients.length > remaining) throw new Error(`Not enough message quota (${Math.max(remaining, 0)} left).`);
 
   if (recipients.length) {
     const { error } = await sb.from("messages").insert(
@@ -81,7 +81,7 @@ export async function dispatchQueued(sb: SupabaseClient, batch = 50) {
       if (event && tpl) cache.set(key, { event, tpl });
     }
     const ctx = cache.get(key);
-    if (!ctx) { await sb.from("messages").update({ status: "failed", error: "Plantilla eliminada" }).eq("id", m.id); failed++; continue; }
+    if (!ctx) { await sb.from("messages").update({ status: "failed", error: "Template deleted" }).eq("id", m.id); failed++; continue; }
 
     const vars = await varsFor(sb, m, ctx.event);
     const body = renderTemplate(ctx.tpl.body, vars);
@@ -98,12 +98,12 @@ export async function dispatchQueued(sb: SupabaseClient, batch = 50) {
       result = await email.send({ to: m.to_address, subject, html, text: body });
       await sb.from("messages").update({ subject, body }).eq("id", m.id);
     } else if (!wa) {
-      result = { ok: false, error: "WhatsApp no configurado", retryable: false };
+      result = { ok: false, error: "WhatsApp is not configured", retryable: false };
     } else if (!ctx.tpl.wa_template_name) {
-      result = { ok: false, error: "La plantilla no tiene nombre de plantilla aprobada de WhatsApp", retryable: false };
+      result = { ok: false, error: "This template has no approved WhatsApp template name", retryable: false };
     } else {
       result = await sendWhatsAppTemplate(wa, {
-        to: m.to_address, templateName: ctx.tpl.wa_template_name, language: ctx.tpl.wa_language ?? "es",
+        to: m.to_address, templateName: ctx.tpl.wa_template_name, language: ctx.tpl.wa_language ?? "en_US",
         bodyParams: templateVariables(ctx.tpl.body).map((v) => String(vars[v] ?? "")),
       });
       await sb.from("messages").update({ body }).eq("id", m.id);
