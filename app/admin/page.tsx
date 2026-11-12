@@ -6,6 +6,7 @@ import { ActionForm } from "@/components/action-form";
 import { SubmitButton } from "@/components/submit-button";
 import { Badge, Card, Field, Input, Select } from "@/components/ui";
 import { createEvent, setEventStatus, updateLimits } from "./actions";
+import { AdminNav } from "./nav";
 
 export default async function AdminPage() {
   const { supabase } = await requireAdmin();
@@ -17,10 +18,7 @@ export default async function AdminPage() {
 
   return (
     <main className="mx-auto max-w-6xl space-y-6 px-6 py-10">
-      <div className="flex items-center justify-between">
-        <h1 className="font-display text-3xl font-bold tracking-tight">Super-admin</h1>
-        <Link href="/dashboard" className="text-sm underline">My events</Link>
-      </div>
+      <AdminNav />
 
       <Card title="New event (client has paid)">
         <ActionForm action={createEvent} className="grid gap-3 md:grid-cols-3">
