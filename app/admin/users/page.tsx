@@ -5,7 +5,7 @@ import { ActionForm } from "@/components/action-form";
 import { SubmitButton } from "@/components/submit-button";
 import { Badge, Card, Empty, Field, Input, Select } from "@/components/ui";
 import { AdminNav } from "../nav";
-import { createUser, grantEventAccess, revokeEventAccess, setSuperAdmin } from "./actions";
+import { createUser, grantEventAccess, resetPassword, revokeEventAccess, setSuperAdmin } from "./actions";
 
 const ROLES = [["owner", "Owner"], ["editor", "Editor"], ["viewer", "Viewer"]] as const;
 const ROLE_HINT = "Owner and editor can change everything; viewer can only look.";
@@ -33,6 +33,7 @@ export default async function AdminUsersPage() {
         <ActionForm action={createUser} className="grid gap-3 md:grid-cols-3">
           <Field label="Email"><Input name="email" type="email" required placeholder="martha@example.com" /></Field>
           <Field label="Name" hint="Optional"><Input name="name" placeholder="Martha Diaz" /></Field>
+          <Field label="Password" hint="Leave blank to generate one. You’ll see it once to share."><Input name="password" type="text" autoComplete="new-password" minLength={8} placeholder="Generate for me" /></Field>
           <Field label="Give access to event" hint="Optional">
             <Select name="event_id" defaultValue="">
               <option value="">No event yet</option>
@@ -43,7 +44,7 @@ export default async function AdminUsersPage() {
             <Select name="role" defaultValue="owner">{ROLES.map(([v, l]) => <option key={v} value={v}>{l}</option>)}</Select>
           </Field>
           <div className="flex flex-col justify-center gap-2 text-sm md:col-span-2">
-            <label className="flex items-center gap-2"><input type="checkbox" name="send_invite" defaultChecked /> Email them an invitation to log in</label>
+            <label className="flex items-center gap-2"><input type="checkbox" name="send_invite" /> Also email them a login link (optional)</label>
             <label className="flex items-center gap-2"><input type="checkbox" name="super_admin" /> Make super-admin (full access to every event and to this page)</label>
           </div>
           <div className="md:col-span-3"><SubmitButton pendingText="Creating…">Create user</SubmitButton></div>
@@ -68,6 +69,10 @@ export default async function AdminUsersPage() {
                         <div className="font-medium">{name || u.email}</div>
                         {name && <div className="text-xs text-stone-500">{u.email}</div>}
                         {!u.last_sign_in_at && <div className="mt-1 text-xs text-stone-500">Hasn’t logged in yet</div>}
+                        <ActionForm action={resetPassword} className="mt-1">
+                          <input type="hidden" name="user_id" value={u.id} />
+                          <button className="text-xs underline">Reset password</button>
+                        </ActionForm>
                       </td>
                       <td className="py-3 pr-4">
                         <div className="flex flex-col items-start gap-1">
