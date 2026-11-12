@@ -8,6 +8,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { DEFAULT_TEMPLATES } from "@/lib/messaging/defaults";
 import type { ActionState } from "@/components/action-form";
 import type { EventType } from "@/lib/types";
+import { generatePassword } from "@/lib/password";
 
 const RESERVED = ["login", "dashboard", "admin", "api", "auth", "app", "www", "help"];
 
@@ -47,16 +48,26 @@ export async function createEvent(_: ActionState, fd: FormData): Promise<ActionS
   });
   await supabase.from("venue_layouts").insert({ event_id: ev.id, name: "Main venue" });
   await supabase.from("message_templates").insert(DEFAULT_TEMPLATES.map((t) => ({ ...t, event_id: ev.id })));
-  await supabase.from("event_invites").insert({ event_id: ev.id, email: d.owner_email.toLowerCase(), role: "owner" });
-
-  // Send an invitation email; if the user already exists they just log in and the invite is accepted.
+  // Give the owner an account with a password (no email needed). Existing accounts keep their password.
   const admin = createAdminClient();
-  const { error: invErr } = await admin.auth.admin.inviteUserByEmail(d.owner_email, { redirectTo: `${env.appUrl()}/auth/callback?next=/dashboard/${ev.id}` });
+  const ownerEmail = d.owner_email.toLowerCase();
+  const password = generatePassword();
+  let ownerId: string | undefined;
+  let isNew = false;
+  const { data: created } = await admin.auth.admin.createUser({ email: ownerEmail, password, email_confirm: true });
+  if (created.user) { ownerId = created.user.id; isNew = true; }
+  else {
+    const { data: list } = await admin.auth.admin.listUsers({ perPage: 1000 });
+    ownerId = list.users.find((u) => u.email?.toLowerCase() === ownerEmail)?.id;
+  }
+  if (ownerId) await admin.from("event_members").upsert({ event_id: ev.id, user_id: ownerId, role: "owner" });
+  else await supabase.from("event_invites").insert({ event_id: ev.id, email: ownerEmail, role: "owner" });
+
   revalidatePath("/admin");
-  return {
-    ok: true,
-    message: invErr ? `Event created. ${d.owner_email} already has an account: they can log in at /login to see the event.` : `Event created and invitation sent to ${d.owner_email}.`,
-  };
+  revalidatePath("/admin/users");
+  return isNew
+    ? { ok: true, message: `Event created. ${ownerEmail} can log in at ${env.appUrl()}/login with this password.`, secret: password }
+    : { ok: true, message: `Event created. ${ownerEmail} already has an account and will see the event when they log in. Use Users → Reset password if they need a new one.` };
 }
 
 export async function setEventStatus(fd: FormData) {

@@ -23,7 +23,7 @@ export default async function DashboardHome() {
         <div className="flex items-center gap-4"><Logo size={26} /><span className="text-stone-300">/</span><h1 className="font-display text-2xl font-bold tracking-tight">My events</h1></div>
         <div className="flex items-center gap-3 text-sm">
           {admin && <Link href="/admin" className="underline">Super-admin</Link>}
-          <span className="text-stone-500">{user.email}</span>
+          <Link href="/account" className="text-stone-500 underline">{user.email}</Link>
           <form action={signOut}><button className="underline">Log out</button></form>
         </div>
       </div>
