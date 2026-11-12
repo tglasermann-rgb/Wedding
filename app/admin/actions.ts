@@ -14,7 +14,7 @@ const RESERVED = ["login", "dashboard", "admin", "api", "auth", "app", "www", "h
 const createSchema = z.object({
   title: z.string().min(2),
   hosts: z.string().optional(),
-  slug: z.string().regex(/^[a-z0-9][a-z0-9-]{1,60}[a-z0-9]$/, "Slug: solo minúsculas, números y guiones"),
+  slug: z.string().regex(/^[a-z0-9][a-z0-9-]{1,60}[a-z0-9]$/, "Slug: lowercase letters, numbers and dashes only"),
   type: z.enum(["wedding", "bar_mitzvah", "bat_mitzvah", "brit_milah", "quinceanera", "generic"]),
   event_date: z.string().optional(),
   owner_email: z.string().email(),
@@ -28,7 +28,7 @@ export async function createEvent(_: ActionState, fd: FormData): Promise<ActionS
   const p = createSchema.safeParse(Object.fromEntries(fd));
   if (!p.success) return { ok: false, message: p.error.issues[0].message };
   const d = p.data;
-  if (RESERVED.includes(d.slug)) return { ok: false, message: "Ese slug está reservado" };
+  if (RESERVED.includes(d.slug)) return { ok: false, message: "That slug is reserved" };
   const preset = EVENT_TYPES[d.type as EventType];
 
   const { data: ev, error } = await supabase
@@ -39,13 +39,13 @@ export async function createEvent(_: ActionState, fd: FormData): Promise<ActionS
     })
     .select("id")
     .single();
-  if (error) return { ok: false, message: error.code === "23505" ? "Ese slug ya existe" : error.message };
+  if (error) return { ok: false, message: error.code === "23505" ? "That slug is already taken" : error.message };
 
   await supabase.from("event_sessions").insert(preset.defaultSessions.map((name, i) => ({ event_id: ev.id, name, sort: i })));
   await supabase.from("event_sites").insert({
     event_id: ev.id, theme_id: preset.defaultTheme, sections: preset.defaultSections({ title: d.title, hosts: d.hosts ?? "" }),
   });
-  await supabase.from("venue_layouts").insert({ event_id: ev.id, name: "Salón principal" });
+  await supabase.from("venue_layouts").insert({ event_id: ev.id, name: "Main hall" });
   await supabase.from("message_templates").insert(DEFAULT_TEMPLATES.map((t) => ({ ...t, event_id: ev.id })));
   await supabase.from("event_invites").insert({ event_id: ev.id, email: d.owner_email.toLowerCase(), role: "owner" });
 
@@ -55,7 +55,7 @@ export async function createEvent(_: ActionState, fd: FormData): Promise<ActionS
   revalidatePath("/admin");
   return {
     ok: true,
-    message: invErr ? `Evento creado. ${d.owner_email} ya tiene cuenta: que entre en /login y verá el evento.` : `Evento creado e invitación enviada a ${d.owner_email}.`,
+    message: invErr ? `Event created. ${d.owner_email} already has an account: they can log in at /login to see it.` : `Event created and invitation sent to ${d.owner_email}.`,
   };
 }
 

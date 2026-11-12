@@ -14,7 +14,7 @@ export async function updateEvent(eventId: string, _: ActionState, fd: FormData)
   const { error } = await supabase.from("events").update(p.data).eq("id", eventId);
   revalidatePath(path(eventId));
   revalidatePath(`/${event.slug}`);
-  return error ? { ok: false, message: error.message } : { ok: true, message: "Guardado." };
+  return error ? { ok: false, message: error.message } : { ok: true, message: "Saved." };
 }
 
 export async function saveSession(eventId: string, _: ActionState, fd: FormData): Promise<ActionState> {
@@ -29,7 +29,7 @@ export async function saveSession(eventId: string, _: ActionState, fd: FormData)
   const { error } = id ? await supabase.from("event_sessions").update(row).eq("id", id) : await supabase.from("event_sessions").insert(row);
   revalidatePath(path(eventId));
   revalidatePath(`/${event.slug}`);
-  return error ? { ok: false, message: error.message } : { ok: true, message: "Guardado." };
+  return error ? { ok: false, message: error.message } : { ok: true, message: "Saved." };
 }
 
 export async function deleteSession(eventId: string, id: string) {
@@ -41,11 +41,11 @@ export async function deleteSession(eventId: string, id: string) {
 export async function addQuestion(eventId: string, _: ActionState, fd: FormData): Promise<ActionState> {
   const { supabase } = await requireEvent(eventId, { edit: true });
   const label = String(fd.get("label") || "").trim();
-  if (!label) return { ok: false, message: "Escribe la pregunta" };
+  if (!label) return { ok: false, message: "Enter the question" };
   const options = String(fd.get("options") || "").split(",").map((s) => s.trim()).filter(Boolean);
   const { error } = await supabase.from("rsvp_questions").insert({ event_id: eventId, label, kind: options.length ? "select" : "text", options });
   revalidatePath(path(eventId));
-  return error ? { ok: false, message: error.message } : { ok: true, message: "Pregunta agregada." };
+  return error ? { ok: false, message: error.message } : { ok: true, message: "Question added." };
 }
 
 export async function deleteQuestion(eventId: string, id: string) {

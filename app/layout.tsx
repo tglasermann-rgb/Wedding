@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Celebra — sitios y gestión para bodas y eventos",
-  description: "Crea la página de tu evento, gestiona invitados, confirmaciones, mensajes y mesas en un solo lugar.",
+  title: "Celebra — websites and planning for weddings and events",
+  description: "Create your event website and manage guests, RSVPs, messages and seating in one place.",
 };
 
 // Fonts for the dashboard and every public-site theme (lib/site/themes.ts).
@@ -12,7 +12,7 @@ const FONTS =
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="es">
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />

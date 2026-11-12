@@ -26,7 +26,7 @@ function Section({ title, children, muted }: { title?: string; children: ReactNo
   );
 }
 
-const fmtDate = (d: string, locale: string) => new Date(d + "T12:00:00").toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const fmtDate = (d: string, locale: string) => new Date(d + "T12:00:00").toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
 export function SiteSections({ event, sessions, sections, theme, rsvp, invalidToken }: {
   event: SiteEvent; sessions: SessionRow[]; sections: SiteSection[]; theme: Theme; rsvp: RsvpData | null; invalidToken: boolean;
@@ -50,7 +50,7 @@ export function SiteSections({ event, sessions, sections, theme, rsvp, invalidTo
                   <h1 className="text-6xl md:text-8xl" style={{ fontFamily: "var(--site-heading)" }}>{s.title || event.hosts || event.title}</h1>
                   {s.subtitle && <p className="mt-6 text-xl opacity-90">{s.subtitle}</p>}
                   {event.date && <p className="mt-4 text-lg capitalize tracking-wide opacity-80">{fmtDate(event.date, event.locale)}</p>}
-                  {rsvp && <a href="#rsvp" className="mt-10 inline-block rounded-full px-8 py-3 text-white" style={{ background: "var(--site-accent)" }}>Confirmar asistencia</a>}
+                  {rsvp && <a href="#rsvp" className="mt-10 inline-block rounded-full px-8 py-3 text-white" style={{ background: "var(--site-accent)" }}>RSVP</a>}
                 </div>
               </header>
             );
@@ -68,7 +68,7 @@ export function SiteSections({ event, sessions, sections, theme, rsvp, invalidTo
                       {x.starts_at && <p className="mt-2 text-lg" style={{ color: "var(--site-accent)" }}>{new Date(x.starts_at).toLocaleString(event.locale, { timeZone: event.timezone, weekday: "long", day: "numeric", month: "long", hour: "2-digit", minute: "2-digit" })}</p>}
                       {x.venue_name && <p className="mt-2 font-medium">{x.venue_name}</p>}
                       {x.address && <p className="text-sm opacity-70">{x.address}</p>}
-                      {x.map_url && <a href={x.map_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline" style={{ color: "var(--site-accent)" }}>Ver mapa</a>}
+                      {x.map_url && <a href={x.map_url} target="_blank" rel="noreferrer" className="mt-3 inline-block text-sm underline" style={{ color: "var(--site-accent)" }}>View map</a>}
                     </div>
                   ))}
                 </div>
@@ -105,14 +105,14 @@ export function SiteSections({ event, sessions, sections, theme, rsvp, invalidTo
                   {rsvp ? (
                     <RsvpForm slug={event.slug} data={rsvp} sessions={sessions.map((x) => ({ id: x.id, name: x.name }))} deadline={event.rsvpDeadline} open={event.active} />
                   ) : (
-                    <p className="text-center opacity-70">{invalidToken ? "No encontramos tu invitación. Revisa el enlace que recibiste." : "Usa el enlace personal que recibiste por email o WhatsApp para confirmar."}</p>
+                    <p className="text-center opacity-70">{invalidToken ? "We couldn't find your invitation. Please check the link you received." : "Use the personal link you received by email or WhatsApp to RSVP."}</p>
                   )}
                 </div>
               </Section>
             );
         }
       })}
-      <footer className="py-10 text-center text-xs opacity-50">Hecho con Celebra</footer>
+      <footer className="py-10 text-center text-xs opacity-50">Made with Celebra</footer>
     </main>
   );
 }

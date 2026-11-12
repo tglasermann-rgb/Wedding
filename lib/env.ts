@@ -12,7 +12,7 @@ export const env = {
   cronSecret: () => process.env.CRON_SECRET ?? "",
   sender: () =>
     process.env.SENDER_API_KEY
-      ? { apiKey: process.env.SENDER_API_KEY, fromEmail: req("EMAIL_FROM"), fromName: process.env.EMAIL_FROM_NAME ?? "Invitaciones" }
+      ? { apiKey: process.env.SENDER_API_KEY, fromEmail: req("EMAIL_FROM"), fromName: process.env.EMAIL_FROM_NAME ?? "Invitations" }
       : null,
   whatsapp: () =>
     process.env.WHATSAPP_TOKEN && process.env.WHATSAPP_PHONE_NUMBER_ID

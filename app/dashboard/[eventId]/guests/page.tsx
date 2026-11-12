@@ -27,21 +27,21 @@ export default async function GuestsPage({ params }: { params: Promise<{ eventId
     <div className="space-y-6">
       {canEdit && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card title="Agregar invitación">
+          <Card title="Add invitation">
             <ActionForm action={addHousehold.bind(null, eventId)} className="space-y-3">
               <div className="grid grid-cols-2 gap-3">
-                <Field label="Nombre de la invitación"><Input name="name" placeholder="Familia Pérez" /></Field>
-                <Field label="De parte de"><Input name="side" placeholder="novia / novio" /></Field>
-                <Field label="Etiquetas" hint="separadas por coma"><Input name="tags" placeholder="familia, trabajo" /></Field>
-                <Field label="Acompañantes permitidos"><Input name="max_plus_ones" type="number" min={0} defaultValue={0} /></Field>
+                <Field label="Invitation name"><Input name="name" placeholder="The Smith Family" /></Field>
+                <Field label="Guest of"><Input name="side" placeholder="bride / groom" /></Field>
+                <Field label="Tags" hint="comma-separated"><Input name="tags" placeholder="family, work" /></Field>
+                <Field label="Plus-ones allowed"><Input name="max_plus_ones" type="number" min={0} defaultValue={0} /></Field>
               </div>
-              <Field label="Personas" hint="Una por línea: Nombre Apellido, email, teléfono, niño">
-                <Textarea name="members" required placeholder={"Juan Pérez, juan@mail.com, 55 1234 5678\nLucía Pérez, niño"} />
+              <Field label="People" hint="One per line: First Last, email, phone, child">
+                <Textarea name="members" required placeholder={"John Smith, john@mail.com, (212) 555-0142\nLucy Smith, child"} />
               </Field>
-              <SubmitButton>Agregar</SubmitButton>
+              <SubmitButton>Add</SubmitButton>
             </ActionForm>
           </Card>
-          <Card title="Importar desde Excel / CSV">
+          <Card title="Import from Excel / CSV">
             <CsvImport eventId={eventId} />
           </Card>
         </div>

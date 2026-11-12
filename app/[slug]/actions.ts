@@ -5,19 +5,19 @@ import { submitRsvp } from "@/lib/rsvp/service";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 const ERRORS: Record<string, string> = {
-  deadline_passed: "La fecha límite para confirmar ya pasó. Contacta a los anfitriones.",
-  event_inactive: "Las confirmaciones aún no están abiertas.",
-  unknown_guest: "Hubo un problema con tu invitación.",
-  unknown_session: "Hubo un problema con tu invitación.",
-  too_many_plus_ones: "Agregaste más acompañantes de los permitidos.",
-  not_found: "Invitación no encontrada.",
+  deadline_passed: "The RSVP deadline has passed. Please contact the hosts.",
+  event_inactive: "RSVPs are not open yet.",
+  unknown_guest: "There was a problem with your invitation.",
+  unknown_session: "There was a problem with your invitation.",
+  too_many_plus_ones: "You added more plus-ones than allowed.",
+  not_found: "Invitation not found.",
 };
 
 export async function submitRsvpAction(slug: string, input: RsvpSubmission) {
   const parsed = rsvpSubmissionSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, message: "Revisa los datos del formulario." };
+  if (!parsed.success) return { ok: false, message: "Please check the form." };
   const r = await submitRsvp(createAdminClient(), parsed.data, "web");
   if (!r.ok) return { ok: false, message: ERRORS[r.error] ?? "Error" };
   revalidatePath(`/${slug}`);
-  return { ok: true, message: "¡Gracias! Recibimos tu respuesta." };
+  return { ok: true, message: "Thank you! We received your RSVP." };
 }

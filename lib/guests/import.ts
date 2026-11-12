@@ -1,6 +1,6 @@
 import { parsePhoneNumberFromString, type CountryCode } from "libphonenumber-js";
 
-export function normalizePhone(raw: string | null | undefined, defaultCountry: CountryCode = "MX"): string | null {
+export function normalizePhone(raw: string | null | undefined, defaultCountry: CountryCode = "US"): string | null {
   if (!raw) return null;
   const p = parsePhoneNumberFromString(String(raw).trim(), defaultCountry);
   return p?.isValid() ? p.number : null;
@@ -19,15 +19,15 @@ export interface ImportRow {
 }
 
 const ALIASES: Record<keyof Omit<ImportRow, "tags"> | "tags", string[]> = {
-  household: ["household", "familia", "invitacion", "invitación", "grupo", "family"],
-  first_name: ["first_name", "nombre", "name", "first name"],
-  last_name: ["last_name", "apellido", "apellidos", "last name"],
-  email: ["email", "correo", "e-mail", "mail"],
-  phone: ["phone", "telefono", "teléfono", "celular", "whatsapp", "movil", "móvil"],
-  side: ["side", "lado", "de parte de"],
-  tags: ["tags", "etiquetas", "grupo2", "categoria", "categoría"],
-  is_child: ["is_child", "niño", "nino", "child", "menor"],
-  plus_ones: ["plus_ones", "acompañantes", "acompanantes", "+1"],
+  household: ["household", "party", "invitation", "group", "familia", "invitacion", "invitación", "grupo", "family"],
+  first_name: ["first_name", "first name", "first", "name", "nombre"],
+  last_name: ["last_name", "last name", "last", "surname", "apellido"],
+  email: ["email", "e-mail", "mail", "email address", "correo"],
+  phone: ["phone", "phone number", "mobile", "cell", "telefono", "teléfono", "celular", "whatsapp", "movil", "móvil"],
+  side: ["side", "guest of", "lado"],
+  tags: ["tags", "labels", "category", "etiquetas", "grupo2", "categoria", "categoría"],
+  is_child: ["is_child", "child", "kid", "minor", "niño", "nino", "child", "menor"],
+  plus_ones: ["plus_ones", "plus ones", "guests allowed", "acompañantes", "acompanantes", "+1"],
 };
 
 const norm = (s: string) => s.trim().toLowerCase();
@@ -35,8 +35,8 @@ const truthy = (v: unknown) => ["1", "si", "sí", "yes", "true", "x"].includes(n
 
 export interface ImportResult { rows: ImportRow[]; errors: { line: number; message: string }[] }
 
-/** Map spreadsheet rows (header -> value) to import rows. Rows without household use "Nombre Apellido". */
-export function mapImportRows(records: Record<string, unknown>[], defaultCountry: CountryCode = "MX"): ImportResult {
+/** Map spreadsheet rows (header -> value) to import rows. Rows without household use "First Last". */
+export function mapImportRows(records: Record<string, unknown>[], defaultCountry: CountryCode = "US"): ImportResult {
   const rows: ImportRow[] = [];
   const errors: ImportResult["errors"] = [];
   records.forEach((rec, i) => {
@@ -45,12 +45,12 @@ export function mapImportRows(records: Record<string, unknown>[], defaultCountry
       return "";
     };
     const first = get("first_name");
-    if (!first) { if (Object.values(rec).some((v) => String(v ?? "").trim())) errors.push({ line: i + 2, message: "Falta el nombre" }); return; }
+    if (!first) { if (Object.values(rec).some((v) => String(v ?? "").trim())) errors.push({ line: i + 2, message: "Missing first name" }); return; }
     const phoneRaw = get("phone");
     const phone = normalizePhone(phoneRaw, defaultCountry);
-    if (phoneRaw && !phone) errors.push({ line: i + 2, message: `Teléfono inválido: ${phoneRaw}` });
+    if (phoneRaw && !phone) errors.push({ line: i + 2, message: `Invalid phone: ${phoneRaw}` });
     const email = get("email").toLowerCase();
-    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) errors.push({ line: i + 2, message: `Email inválido: ${email}` });
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) errors.push({ line: i + 2, message: `Invalid email: ${email}` });
     const last = get("last_name");
     rows.push({
       household: get("household") || `${first} ${last}`.trim(),
