@@ -26,7 +26,7 @@ function Section({ title, children, muted }: { title?: string; children: ReactNo
   );
 }
 
-const fmtDate = (d: string, locale: string) => new Date(d + "T12:00:00").toLocaleDateString(locale, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+const fmtDate = (d: string, locale: string) => new Date(d + "T12:00:00").toLocaleDateString(locale, { weekday: "long", month: "long", day: "numeric", year: "numeric" });
 
 export function SiteSections({ event, sessions, sections, theme, rsvp, invalidToken }: {
   event: SiteEvent; sessions: SessionRow[]; sections: SiteSection[]; theme: Theme; rsvp: RsvpData | null; invalidToken: boolean;
