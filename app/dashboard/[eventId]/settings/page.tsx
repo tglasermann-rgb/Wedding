@@ -24,37 +24,37 @@ export default async function SettingsPage({ params }: { params: Promise<{ event
 
   return (
     <fieldset disabled={!canEdit} className="grid gap-6 lg:grid-cols-2">
-      <Card title="Datos del evento">
+      <Card title="Event details">
         <ActionForm action={updateEvent.bind(null, eventId)} className="space-y-3">
-          <Field label="Título"><Input name="title" defaultValue={event.title} required /></Field>
-          <Field label="Anfitriones / novios"><Input name="hosts" defaultValue={event.hosts ?? ""} /></Field>
+          <Field label="Title"><Input name="title" defaultValue={event.title} required /></Field>
+          <Field label="Hosts / couple"><Input name="hosts" defaultValue={event.hosts ?? ""} /></Field>
           <div className="grid grid-cols-2 gap-3">
-            <Field label="Fecha"><Input type="date" name="event_date" defaultValue={event.event_date ?? ""} /></Field>
-            <Field label="Fecha límite RSVP"><Input type="date" name="rsvp_deadline" defaultValue={event.rsvp_deadline ?? ""} /></Field>
+            <Field label="Date"><Input type="date" name="event_date" defaultValue={event.event_date ?? ""} /></Field>
+            <Field label="RSVP deadline"><Input type="date" name="rsvp_deadline" defaultValue={event.rsvp_deadline ?? ""} /></Field>
           </div>
-          <Field label="Zona horaria" hint="ej. America/Mexico_City, America/Argentina/Buenos_Aires, Asia/Jerusalem"><Input name="timezone" defaultValue={event.timezone} /></Field>
-          <SubmitButton>Guardar</SubmitButton>
+          <Field label="Time zone" hint="e.g. America/New_York, America/Los_Angeles, Asia/Jerusalem"><Input name="timezone" defaultValue={event.timezone} /></Field>
+          <SubmitButton>Save</SubmitButton>
         </ActionForm>
       </Card>
 
-      <Card title="Eventos / momentos">
+      <Card title="Sessions">
         <div className="space-y-4">
           {[...sessions, null].map((s) => (
             <details key={s?.id ?? "new"} open={!s && sessions.length === 0} className="rounded-lg border border-stone-200 p-3">
-              <summary className="cursor-pointer text-sm font-medium">{s ? s.name : "+ Agregar momento (ceremonia, recepción, kidush…)"}</summary>
+              <summary className="cursor-pointer text-sm font-medium">{s ? s.name : "+ Add a session (ceremony, reception, kiddush…)"}</summary>
               <ActionForm action={saveSession.bind(null, eventId)} className="mt-3 space-y-2">
                 <input type="hidden" name="id" value={s?.id ?? ""} />
                 <div className="grid grid-cols-2 gap-2">
-                  <Field label="Nombre"><Input name="name" required defaultValue={s?.name} /></Field>
-                  <Field label="Fecha y hora"><Input type="datetime-local" name="starts_at" defaultValue={toLocalInput(s?.starts_at ?? null, event.timezone)} /></Field>
-                  <Field label="Lugar"><Input name="venue_name" defaultValue={s?.venue_name ?? ""} /></Field>
-                  <Field label="Orden"><Input type="number" name="sort" defaultValue={s?.sort ?? sessions.length} /></Field>
+                  <Field label="Name"><Input name="name" required defaultValue={s?.name} /></Field>
+                  <Field label="Date and time"><Input type="datetime-local" name="starts_at" defaultValue={toLocalInput(s?.starts_at ?? null, event.timezone)} /></Field>
+                  <Field label="Venue"><Input name="venue_name" defaultValue={s?.venue_name ?? ""} /></Field>
+                  <Field label="Order"><Input type="number" name="sort" defaultValue={s?.sort ?? sessions.length} /></Field>
                 </div>
-                <Field label="Dirección"><Input name="address" defaultValue={s?.address ?? ""} /></Field>
-                <Field label="Link de Google Maps / Waze"><Input name="map_url" defaultValue={s?.map_url ?? ""} /></Field>
+                <Field label="Address"><Input name="address" defaultValue={s?.address ?? ""} /></Field>
+                <Field label="Google Maps / Waze link"><Input name="map_url" defaultValue={s?.map_url ?? ""} /></Field>
                 <div className="flex gap-2">
-                  <SubmitButton size="sm">Guardar</SubmitButton>
-                  {s && <button formAction={async () => { "use server"; await deleteSession(eventId, s.id); }} className="text-xs text-red-700 underline">Eliminar</button>}
+                  <SubmitButton size="sm">Save</SubmitButton>
+                  {s && <button formAction={async () => { "use server"; await deleteSession(eventId, s.id); }} className="text-xs text-red-700 underline">Delete</button>}
                 </div>
               </ActionForm>
             </details>
@@ -62,7 +62,7 @@ export default async function SettingsPage({ params }: { params: Promise<{ event
         </div>
       </Card>
 
-      <Card title="Preguntas del RSVP">
+      <Card title="RSVP questions">
         <ul className="mb-3 space-y-1 text-sm">
           {(questions ?? []).map((q) => (
             <li key={q.id} className="flex justify-between">
@@ -72,17 +72,17 @@ export default async function SettingsPage({ params }: { params: Promise<{ event
           ))}
         </ul>
         <ActionForm action={addQuestion.bind(null, eventId)} className="space-y-2">
-          <Field label="Pregunta"><Input name="label" placeholder="¿Qué menú prefieres?" /></Field>
-          <Field label="Opciones" hint="separadas por coma; vacío = respuesta libre"><Input name="options" placeholder="Carne, Pescado, Vegetariano" /></Field>
-          <SubmitButton size="sm" variant="secondary">Agregar</SubmitButton>
+          <Field label="Question"><Input name="label" placeholder="Which entrée would you like?" /></Field>
+          <Field label="Options" hint="comma-separated; leave empty for a free-text answer"><Input name="options" placeholder="Beef, Fish, Vegetarian" /></Field>
+          <SubmitButton size="sm" variant="secondary">Add</SubmitButton>
         </ActionForm>
-        <p className="mt-2 text-xs text-stone-500">Las restricciones alimenticias ya se preguntan siempre.</p>
+        <p className="mt-2 text-xs text-stone-500">Dietary restrictions are always asked.</p>
       </Card>
 
-      <Card title="Acceso">
+      <Card title="Access">
         <ul className="space-y-1 text-sm">
-          {(invites ?? []).map((i) => <li key={i.email}>{i.email} · {i.role} {i.accepted_at ? "✓" : "(pendiente)"}</li>)}
-          <li className="text-xs text-stone-500">{members?.length ?? 0} usuario(s) con acceso. Para agregar a alguien (wedding planner, familiar), escríbenos.</li>
+          {(invites ?? []).map((i) => <li key={i.email}>{i.email} · {i.role} {i.accepted_at ? "✓" : "(pending)"}</li>)}
+          <li className="text-xs text-stone-500">{members?.length ?? 0} user(s) with access. To add someone (a wedding planner or family member), contact us.</li>
         </ul>
       </Card>
     </fieldset>

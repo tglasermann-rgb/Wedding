@@ -6,7 +6,7 @@ import { guest } from "./fixtures";
 
 describe("renderTemplate", () => {
   it("replaces variables and blanks unknown ones", () => {
-    expect(renderTemplate("Hola {{ first_name }}, {{x}}!", { first_name: "Ana" })).toBe("Hola Ana, !");
+    expect(renderTemplate("Hi {{ first_name }}, {{x}}!", { first_name: "Anna" })).toBe("Hi Anna, !");
   });
   it("lists variables in order without duplicates", () => {
     expect(templateVariables("{{a}} {{b}} {{a}}")).toEqual(["a", "b"]);

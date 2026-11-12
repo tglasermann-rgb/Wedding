@@ -3,7 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
-  ["", "Resumen"], ["/guests", "Invitados"], ["/messages", "Mensajes"], ["/seating", "Mesas"], ["/site", "Página"], ["/settings", "Ajustes"],
+  ["", "Overview"], ["/guests", "Guests"], ["/messages", "Messages"], ["/seating", "Seating"], ["/site", "Website"], ["/settings", "Settings"],
 ] as const;
 
 export function EventNav({ eventId }: { eventId: string }) {
@@ -14,7 +14,7 @@ export function EventNav({ eventId }: { eventId: string }) {
       {TABS.map(([href, label]) => {
         const active = href === "" ? path === base : path.startsWith(base + href);
         return (
-          <Link key={href} href={base + href} className={`whitespace-nowrap rounded-lg px-3 py-1.5 text-sm ${active ? "bg-stone-900 text-white" : "text-stone-600 hover:bg-stone-100"}`}>
+          <Link key={href} href={base + href} className={`whitespace-nowrap rounded-full px-3.5 py-1.5 text-sm ${active ? "bg-aubergine font-medium text-linen" : "text-stone-600 hover:bg-stone-100"}`}>
             {label}
           </Link>
         );

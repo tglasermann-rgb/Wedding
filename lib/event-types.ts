@@ -14,76 +14,76 @@ const baseSections = (heroTitle: string, heroSubtitle: string, extra: SiteSectio
   { id: "hero", type: "hero", title: heroTitle, subtitle: heroSubtitle, imageUrl: "" },
   { id: "countdown", type: "countdown" },
   ...extra,
-  { id: "schedule", type: "schedule", title: "Programa" },
-  { id: "rsvp", type: "rsvp", title: "Confirma tu asistencia", text: "Nos encantaría contar contigo." },
-  { id: "faq", type: "faq", title: "Preguntas frecuentes", items: [] },
+  { id: "schedule", type: "schedule", title: "Schedule" },
+  { id: "rsvp", type: "rsvp", title: "RSVP", text: "We'd love to celebrate with you." },
+  { id: "faq", type: "faq", title: "FAQ", items: [] },
 ];
 
 export const EVENT_TYPES: Record<EventType, EventTypePreset> = {
   wedding: {
     type: "wedding",
-    label: "Boda",
-    hostsLabel: "Novios",
-    defaultSessions: ["Ceremonia", "Recepción"],
+    label: "Wedding",
+    hostsLabel: "Couple",
+    defaultSessions: ["Ceremony", "Reception"],
     defaultTheme: "classic",
     defaultSections: ({ hosts }) =>
-      baseSections(hosts || "Nuestra boda", "¡Nos casamos!", [
-        { id: "story", type: "text", title: "Nuestra historia", body: "" },
-        { id: "dress", type: "text", title: "Código de vestimenta", body: "Formal" },
-        { id: "gifts", type: "gifts", title: "Mesa de regalos", text: "", links: [] },
-        { id: "gallery", type: "gallery", title: "Galería", images: [] },
+      baseSections(hosts || "Our wedding", "We're getting married!", [
+        { id: "story", type: "text", title: "Our story", body: "" },
+        { id: "dress", type: "text", title: "Dress code", body: "Formal" },
+        { id: "gifts", type: "gifts", title: "Registry", text: "", links: [] },
+        { id: "gallery", type: "gallery", title: "Gallery", images: [] },
       ]),
   },
   bar_mitzvah: {
     type: "bar_mitzvah",
     label: "Bar Mitzvah",
-    hostsLabel: "Familia",
-    defaultSessions: ["Aliá a la Torá", "Fiesta"],
+    hostsLabel: "Family",
+    defaultSessions: ["Torah Service", "Party"],
     defaultTheme: "modern",
     defaultSections: ({ title, hosts }) =>
-      baseSections(title, hosts ? `Con cariño, ${hosts}` : "Te invitamos a celebrar", [
-        { id: "about", type: "text", title: "Sobre la celebración", body: "" },
-        { id: "gallery", type: "gallery", title: "Galería", images: [] },
+      baseSections(title, hosts ? `With love, ${hosts}` : "Join us to celebrate", [
+        { id: "about", type: "text", title: "About the celebration", body: "" },
+        { id: "gallery", type: "gallery", title: "Gallery", images: [] },
       ]),
   },
   bat_mitzvah: {
     type: "bat_mitzvah",
     label: "Bat Mitzvah",
-    hostsLabel: "Familia",
-    defaultSessions: ["Ceremonia", "Fiesta"],
+    hostsLabel: "Family",
+    defaultSessions: ["Ceremony", "Party"],
     defaultTheme: "modern",
     defaultSections: ({ title, hosts }) =>
-      baseSections(title, hosts ? `Con cariño, ${hosts}` : "Te invitamos a celebrar", [
-        { id: "about", type: "text", title: "Sobre la celebración", body: "" },
-        { id: "gallery", type: "gallery", title: "Galería", images: [] },
+      baseSections(title, hosts ? `With love, ${hosts}` : "Join us to celebrate", [
+        { id: "about", type: "text", title: "About the celebration", body: "" },
+        { id: "gallery", type: "gallery", title: "Gallery", images: [] },
       ]),
   },
   brit_milah: {
     type: "brit_milah",
-    label: "Brit Milá",
-    hostsLabel: "Padres",
-    defaultSessions: ["Brit Milá"],
+    label: "Brit Milah",
+    hostsLabel: "Parents",
+    defaultSessions: ["Brit Milah"],
     defaultTheme: "classic",
     defaultSections: ({ title, hosts }) =>
-      baseSections(title, hosts ? `${hosts} les invitan` : "Te invitamos", []),
+      baseSections(title, hosts ? `${hosts} invite you` : "You're invited", []),
   },
   quinceanera: {
     type: "quinceanera",
-    label: "XV Años",
+    label: "Quinceañera",
     hostsLabel: "Quinceañera",
-    defaultSessions: ["Misa", "Fiesta"],
+    defaultSessions: ["Mass", "Party"],
     defaultTheme: "modern",
     defaultSections: ({ title, hosts }) =>
-      baseSections(hosts || title, "Mis XV años", [
-        { id: "gifts", type: "gifts", title: "Regalos", text: "", links: [] },
-        { id: "gallery", type: "gallery", title: "Galería", images: [] },
+      baseSections(hosts || title, "My Quinceañera", [
+        { id: "gifts", type: "gifts", title: "Registry", text: "", links: [] },
+        { id: "gallery", type: "gallery", title: "Gallery", images: [] },
       ]),
   },
   generic: {
     type: "generic",
-    label: "Evento",
-    hostsLabel: "Anfitriones",
-    defaultSessions: ["Evento"],
+    label: "Event",
+    hostsLabel: "Hosts",
+    defaultSessions: ["Event"],
     defaultTheme: "classic",
     defaultSections: ({ title, hosts }) => baseSections(title, hosts || "", []),
   },

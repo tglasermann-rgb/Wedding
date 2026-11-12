@@ -7,7 +7,7 @@ export function SubmitButton({ children, pendingText, ...p }: ComponentProps<typ
   const { pending } = useFormStatus();
   return (
     <Button type="submit" disabled={pending} {...p}>
-      {pending ? pendingText ?? "Guardando…" : children}
+      {pending ? pendingText ?? "Saving…" : children}
     </Button>
   );
 }

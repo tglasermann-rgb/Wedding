@@ -24,10 +24,10 @@ export async function saveTemplate(eventId: string, _: ActionState, fd: FormData
   const p = templateSchema.safeParse(Object.fromEntries(fd));
   if (!p.success) return { ok: false, message: p.error.issues[0].message };
   const { id, ...row } = p.data;
-  const data = { ...row, event_id: eventId, subject: row.subject || null, wa_template_name: row.wa_template_name || null, wa_language: row.wa_language || "es" };
+  const data = { ...row, event_id: eventId, subject: row.subject || null, wa_template_name: row.wa_template_name || null, wa_language: row.wa_language || "en_US" };
   const { error } = id ? await supabase.from("message_templates").update(data).eq("id", id) : await supabase.from("message_templates").insert(data);
   revalidatePath(path(eventId));
-  return error ? { ok: false, message: error.message } : { ok: true, message: "Plantilla guardada." };
+  return error ? { ok: false, message: error.message } : { ok: true, message: "Template saved." };
 }
 
 export async function deleteTemplate(eventId: string, id: string) {
@@ -52,14 +52,14 @@ export async function createCampaign(eventId: string, _: ActionState, fd: FormDa
     const templateId = z.string().uuid().parse(fd.get("templateId"));
     const audience = audienceFrom(fd);
     const when = String(fd.get("scheduled_at") || "");
-    const name = String(fd.get("name") || "Envío");
+    const name = String(fd.get("name") || "Send");
     if (when) {
       const { error } = await supabase.from("campaigns").insert({
         event_id: eventId, template_id: templateId, name, audience, scheduled_at: new Date(when).toISOString(), status: "scheduled",
       });
       if (error) throw error;
       revalidatePath(path(eventId));
-      return { ok: true, message: `Programado para ${new Date(when).toLocaleString("es")}.` };
+      return { ok: true, message: `Scheduled for ${new Date(when).toLocaleString("en-US")}.` };
     }
     const { data: c, error } = await supabase.from("campaigns").insert({ event_id: eventId, template_id: templateId, name, audience, status: "sending" }).select("id").single();
     if (error) throw error;
@@ -69,7 +69,7 @@ export async function createCampaign(eventId: string, _: ActionState, fd: FormDa
     revalidatePath(path(eventId));
     return {
       ok: true,
-      message: `${r.queued} mensajes en cola, ${d.sent} enviados ya${r.skippedNoContact ? `; ${r.skippedNoContact} sin contacto para este canal` : ""}. El resto sale en los próximos minutos.`,
+      message: `${r.queued} messages queued, ${d.sent} sent so far${r.skippedNoContact ? `; ${r.skippedNoContact} with no contact for this channel` : ""}. The rest will go out in the next few minutes.`,
     };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
@@ -97,13 +97,13 @@ export async function createAutomation(eventId: string, _: ActionState, fd: Form
     const { error } = await supabase.from("automations").insert({
       event_id: eventId,
       template_id: z.string().uuid().parse(fd.get("templateId")),
-      name: String(fd.get("name") || "Recordatorio"),
+      name: String(fd.get("name") || "Reminder"),
       days_before: z.coerce.number().int().min(0).max(365).parse(fd.get("days_before")),
       audience: audienceFrom(fd),
     });
     if (error) throw error;
     revalidatePath(path(eventId));
-    return { ok: true, message: "Automatización creada." };
+    return { ok: true, message: "Automatic reminder created." };
   } catch (e) {
     return { ok: false, message: (e as Error).message };
   }

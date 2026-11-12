@@ -4,7 +4,7 @@ import { submitRsvpAction } from "@/app/[slug]/actions";
 import type { RsvpStatus } from "@/lib/types";
 import type { RsvpData } from "./sections";
 
-const OPTIONS: { v: Exclude<RsvpStatus, "pending">; l: string }[] = [{ v: "yes", l: "Sí asistiré" }, { v: "maybe", l: "Tal vez" }, { v: "no", l: "No podré" }];
+const OPTIONS: { v: Exclude<RsvpStatus, "pending">; l: string }[] = [{ v: "yes", l: "Yes, I'll be there" }, { v: "maybe", l: "Maybe" }, { v: "no", l: "Can't make it" }];
 const inp = "w-full rounded-lg border px-3 py-2 text-sm bg-white/80";
 
 export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: string; data: RsvpData; sessions: { id: string; name: string }[]; deadline: string | null; open: boolean }) {
@@ -36,7 +36,7 @@ export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: strin
     });
   }
 
-  if (!open) return <p className="text-center opacity-70">Las confirmaciones abrirán pronto.</p>;
+  if (!open) return <p className="text-center opacity-70">RSVPs will open soon.</p>;
 
   return (
     <div className="space-y-6">
@@ -62,7 +62,7 @@ export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: strin
           ))}
           {sessions.some((s) => statuses[`${g.id}:${s.id}`] === "yes") && (
             <div className="mt-3 space-y-2">
-              <input className={inp} placeholder="Alergias o dieta especial (opcional)" value={dietary[g.id] ?? ""} onChange={(e) => setDietary((d) => ({ ...d, [g.id]: e.target.value }))} />
+              <input className={inp} placeholder="Allergies or dietary restrictions (optional)" value={dietary[g.id] ?? ""} onChange={(e) => setDietary((d) => ({ ...d, [g.id]: e.target.value }))} />
               {data.questions.map((q) => {
                 const k = `${q.id}:${g.id}`;
                 return q.kind === "select" ? (
@@ -80,24 +80,24 @@ export function RsvpForm({ slug, data, sessions, deadline, open }: { slug: strin
 
       {anyYes && data.plusOnesLeft > 0 && (
         <div className="rounded-2xl p-5" style={{ background: "var(--site-bg)" }}>
-          <div className="mb-2 font-medium">Acompañantes ({data.plusOnesLeft - plusOnes.length} disponibles)</div>
+          <div className="mb-2 font-medium">Plus-ones ({data.plusOnesLeft - plusOnes.length} available)</div>
           {plusOnes.map((p, i) => (
             <div key={i} className="mb-2 grid grid-cols-2 gap-2">
-              <input className={inp} placeholder="Nombre" value={p.firstName} onChange={(e) => setPlusOnes((ps) => ps.map((x, j) => (j === i ? { ...x, firstName: e.target.value } : x)))} />
-              <input className={inp} placeholder="Apellido" value={p.lastName} onChange={(e) => setPlusOnes((ps) => ps.map((x, j) => (j === i ? { ...x, lastName: e.target.value } : x)))} />
+              <input className={inp} placeholder="First name" value={p.firstName} onChange={(e) => setPlusOnes((ps) => ps.map((x, j) => (j === i ? { ...x, firstName: e.target.value } : x)))} />
+              <input className={inp} placeholder="Last name" value={p.lastName} onChange={(e) => setPlusOnes((ps) => ps.map((x, j) => (j === i ? { ...x, lastName: e.target.value } : x)))} />
             </div>
           ))}
-          {plusOnes.length < data.plusOnesLeft && <button type="button" className="text-sm underline" onClick={() => setPlusOnes((p) => [...p, { firstName: "", lastName: "" }])}>+ Agregar acompañante</button>}
+          {plusOnes.length < data.plusOnesLeft && <button type="button" className="text-sm underline" onClick={() => setPlusOnes((p) => [...p, { firstName: "", lastName: "" }])}>+ Add a plus-one</button>}
         </div>
       )}
 
       <div className="text-center">
         <button type="button" disabled={pending || !complete} onClick={submit}
           className="rounded-full px-10 py-3 text-white disabled:opacity-50" style={{ background: "var(--site-accent)" }}>
-          {pending ? "Enviando…" : "Enviar respuesta"}
+          {pending ? "Sending…" : "Send RSVP"}
         </button>
-        {!complete && <p className="mt-2 text-xs opacity-60">Responde por cada persona y cada evento.</p>}
-        {deadline && <p className="mt-2 text-xs opacity-60">Puedes cambiar tu respuesta hasta el {new Date(deadline + "T12:00:00").toLocaleDateString("es", { day: "numeric", month: "long" })}.</p>}
+        {!complete && <p className="mt-2 text-xs opacity-60">Please answer for each person and each event.</p>}
+        {deadline && <p className="mt-2 text-xs opacity-60">You can change your RSVP until {new Date(deadline + "T12:00:00").toLocaleDateString("en-US", { month: "long", day: "numeric" })}.</p>}
         {result && <p className={`mt-4 ${result.ok ? "" : "text-red-700"}`}>{result.message}</p>}
       </div>
     </div>

@@ -1,74 +1,92 @@
-# Celebra — plataforma de páginas y gestión de eventos
+# Celebra
 
-SaaS multi-evento para bodas, bar/bat mitzvah, brit milá, XV años y cualquier celebración.
-Cada cliente obtiene:
+**Gather everyone you love.** Celebra is a multi-event SaaS for weddings, bar and bat mitzvahs, brit milahs, quinceañeras and every other celebration. Each client gets:
 
-- **Página pública** del evento (`/{slug}`) con temas, secciones editables, programa, mapa, regalos, galería, FAQ y **RSVP con link personal** por familia (`/{slug}?i=TOKEN`): sí / no / tal vez por cada momento del evento, acompañantes, dietas y preguntas propias.
-- **Dashboard** (`/dashboard/{eventId}`): resumen en vivo, invitados (alta manual, importación CSV/Excel, edición en línea, exportación), mensajes por **email (Sender)** y **WhatsApp (Cloud API)** con estado por invitado (enviado → entregado → abierto/leído → respondió), envíos programados y recordatorios automáticos, **editor de mesas** (redondas 8/10/12, cuadradas, rectangulares/imperiales) con arrastrar y soltar, reglas “juntos / separados” e impresión.
-- **Super-admin** (`/admin`): crear el evento cuando el cliente paga, invitar al dueño por email, activar/archivar y fijar límites de invitados y mensajes.
+- A **public event website** (`/{slug}`) with themes and editable sections: schedule, map, registry, gallery, FAQ, and an **RSVP with a personal link** per household (`/{slug}?i=TOKEN`): yes / no / maybe for each part of the day, plus-ones, dietary needs and custom questions.
+- A **dashboard** (`/dashboard/{eventId}`): live overview; guests (add by hand, CSV/Excel import, inline editing, export); messages by **email (Sender)** and **WhatsApp (Cloud API)** with per-guest status (sent → delivered → opened/read → replied), scheduled sends and automatic reminders; an optional **seating editor** (round tables of 8/10/12, square, banquet) with drag and drop, "keep together / keep apart" rules and printing.
+- A **super-admin** (`/admin`) to create an event once the client pays, invite the owner by email, activate/archive events and set guest and message limits.
 
-## Arquitectura
+## Brand
 
-| Capa | Tecnología |
+Route A, "The Table": a circle of people seen from above. Nine dots gather into a C; the marigold dot is the guest who just said yes.
+
+| Token | Hex | Use |
+|---|---|---|
+| Aubergine | `#2E1F3A` | Text, logo, primary buttons |
+| Marigold | `#F29E38` | The "yes" dot, accents, secondary CTA |
+| Blush | `#F4D6CF` | Tags, soft fills |
+| Olive | `#6B7F5A` | Attending / success |
+| Linen | `#FAF5EF` | Page background |
+
+Type: **Bricolage Grotesque** for headings (`font-display`), **Figtree** for text and UI (`font-sans`). Voice: warm, calm, hospitable.
+
+- Tokens live in `app/globals.css`. Tailwind's `stone` and `emerald` ramps are re-tinted to the brand, so existing utilities follow it.
+- Logo component: `components/brand/logo.tsx` (`<Logo />`, `<Mark />`, variants `color` / `inverse` / `mono`).
+- SVG files: `public/brand/*` and the favicon at `app/icon.svg`.
+- Event websites keep their own themes (`lib/site/themes.ts`); Celebra appears only as a small "Made with Celebra" footer.
+
+## Architecture
+
+| Layer | Technology |
 |---|---|
 | App | Next.js 15 (App Router, Server Actions), TypeScript, Tailwind v4 |
-| Datos / auth | Supabase: Postgres + RLS, magic link, Storage (`event-assets`) |
-| Mensajes | `lib/messaging/*`: cola en la tabla `messages`, `claim_messages()` con `SKIP LOCKED`, cron cada 5 min (`vercel.json`) |
-| Tracking | Pixel propio `/api/t/o/:id`, redirect de clicks `/api/t/c/:id`, webhooks `/api/webhooks/whatsapp` y `/api/webhooks/email` |
-| Mesas | `react-konva`; geometría y validaciones puras en `lib/seating/*` |
+| Data / auth | Supabase: Postgres + RLS, magic link, Storage (`event-assets`) |
+| Messaging | `lib/messaging/*`: queue in the `messages` table, `claim_messages()` with `SKIP LOCKED`, cron every 5 min (`vercel.json`) |
+| Tracking | Own pixel `/api/t/o/:id`, click redirect `/api/t/c/:id`, webhooks `/api/webhooks/whatsapp` and `/api/webhooks/email` |
+| Seating | `react-konva`; pure geometry and validation in `lib/seating/*` |
 
-**Multi-tenant:** el tenant es el evento. Todas las tablas tienen `event_id` y RLS (`is_event_member`, `can_edit_event`). Roles: `owner`, `editor`, `viewer` (`event_members`), y super-admins en `platform_admins`. Los invitados nunca se autentican: el token de su invitación autoriza el RSVP, que se escribe desde el servidor con la service role tras validar.
+**Multi-tenant:** the tenant is the event. Every table has `event_id` and RLS (`is_event_member`, `can_edit_event`). Roles: `owner`, `editor`, `viewer` (`event_members`), plus super-admins in `platform_admins`. Guests never authenticate: their invitation token authorizes the RSVP, which the server writes with the service role after validation.
 
-**Tipos de evento** (`lib/event-types.ts`): cada tipo define momentos y secciones por defecto. Agregar un tipo nuevo = agregar un preset (y el valor al enum `event_type`).
+**Event types** (`lib/event-types.ts`): each type defines default sessions and sections. Adding a type = adding a preset (and the value to the `event_type` enum).
 
 ```
-app/[slug]                  página pública + RSVP
+app/[slug]                  public event website + RSVP
 app/dashboard/[eventId]/*   resumen, guests, messages, seating, site, settings
 app/admin                   super-admin
 app/api/*                   cron, webhooks, tracking
-lib/                        lógica de dominio (pura y testeada) + acceso a datos
-supabase/migrations         esquema + RLS
+lib/                        domain logic (pure and tested) + data access
+supabase/migrations         schema + RLS
 ```
 
-## Puesta en marcha
+## Getting started
 
-1. Crea un proyecto en Supabase y aplica la migración:
+1. Create a Supabase project and apply the migrations:
    ```bash
-   npx supabase init        # solo la primera vez (crea supabase/config.toml)
-   npx supabase link --project-ref TU_REF
+   npx supabase init        # first time only (creates supabase/config.toml)
+   npx supabase link --project-ref YOUR_REF
    npx supabase db push
    ```
-2. En Supabase → Authentication → URL configuration, agrega `https://TU_DOMINIO/auth/callback` a las Redirect URLs.
-3. Copia `.env.example` a `.env.local` y complétalo.
-4. Hazte super-admin: entra una vez en `/login` con tu email y luego, en el SQL editor de Supabase:
+2. In Supabase → Authentication → URL configuration, add `https://YOUR_DOMAIN/auth/callback` to the Redirect URLs.
+3. Copy `.env.example` to `.env.local` and fill it in.
+4. Make yourself super-admin: log in once at `/login` with your email, then in the Supabase SQL editor:
    ```sql
-   insert into platform_admins select id from auth.users where email = 'tu@email.com';
+   insert into platform_admins select id from auth.users where email = 'you@example.com';
    ```
-5. `npm install && npm run dev`, abre `/admin` y crea el primer evento.
+5. `npm install && npm run dev`, open `/admin` and create the first event.
 
 ### WhatsApp (Cloud API)
 
-1. En Meta for Developers crea una app de tipo Business con el producto WhatsApp, y registra el número de la plataforma.
-2. Crea y aprueba una plantilla (categoría *Utility*), p. ej. `invitacion_evento` en `es`, con cuerpo usando `{{1}}`, `{{2}}`… en el mismo orden en que aparecen las variables en la plantilla de Celebra, y botones de respuesta rápida **Sí / No / Tal vez** (payloads `RSVP_YES`, `RSVP_NO`, `RSVP_MAYBE` o simplemente el texto).
-3. Webhook: URL `https://TU_DOMINIO/api/webhooks/whatsapp`, verify token = `WHATSAPP_VERIFY_TOKEN`, suscríbete a `messages`.
-4. Las respuestas actualizan el RSVP del invitado automáticamente; “STOP” lo da de baja de WhatsApp.
+1. In Meta for Developers, create a Business app with the WhatsApp product and register the platform's number.
+2. Create and get approval for a template (category *Utility*), e.g. `event_invitation` in `en_US`, with a body using `{{1}}`, `{{2}}`… in the same order the variables appear in the Celebra template, and quick-reply buttons **Yes / No / Maybe** (payloads `RSVP_YES`, `RSVP_NO`, `RSVP_MAYBE`, or just the text).
+3. Webhook: URL `https://YOUR_DOMAIN/api/webhooks/whatsapp`, verify token = `WHATSAPP_VERIFY_TOKEN`, subscribe to `messages`.
+4. Replies update the guest's RSVP automatically; "STOP" unsubscribes them from WhatsApp. Spanish replies ("sí", "no", "tal vez", "baja") are still understood.
 
 ### Email (Sender)
 
-Configura `SENDER_API_KEY` y un remitente verificado en `EMAIL_FROM`. Aperturas y clicks se miden con nuestro pixel y redirect. Para entregas/rebotes, apunta el webhook del proveedor a `https://TU_DOMINIO/api/webhooks/email?secret=CRON_SECRET`. Sin `SENDER_API_KEY` los correos solo se registran en consola (útil en desarrollo). Cambiar de proveedor = implementar `EmailProvider` (`lib/messaging/email-provider.ts`).
+Set `SENDER_API_KEY` and a verified sender in `EMAIL_FROM`. Opens and clicks are measured with our pixel and redirect. For deliveries/bounces, point the provider's webhook at `https://YOUR_DOMAIN/api/webhooks/email?secret=CRON_SECRET`. Without `SENDER_API_KEY`, emails are only logged to the console (useful in development). Switching providers = implementing `EmailProvider` (`lib/messaging/email-provider.ts`).
 
-### Producción (Vercel)
+### Production (Vercel)
 
-Despliega el repo, define las variables de entorno y el cron de `vercel.json` llamará a `/api/cron/dispatch` cada 5 minutos con `CRON_SECRET`.
+Deploy the repo, set the environment variables, and the cron in `vercel.json` will call `/api/cron/dispatch` every 5 minutes with `CRON_SECRET`.
 
 ## Tests
 
 ```bash
-npm test            # unitarios (Vitest): RSVP, audiencias, plantillas, estados, webhooks, importación, mesas
-npm run test:sql    # migraciones + RLS contra un Postgres local (PGHOST/PGPORT/PGUSER)
+npm test            # unit (Vitest): RSVP, audiences, templates, statuses, webhooks, import, seating
+npm run test:sql    # migrations + RLS against a local Postgres (PGHOST/PGPORT/PGUSER)
 npm run typecheck && npm run lint && npm run build
 ```
 
 ## Roadmap
 
-Stripe Checkout (pago → evento activo), check-in con QR en la puerta, fotos de invitados por QR, presupuesto y proveedores, checklist, timeline del día, hebreo/RTL e inglés, dominios propios, número de WhatsApp propio del cliente (Embedded Signup), rol *planner* con varios eventos.
+Stripe Checkout (payment → active event), QR check-in at the door, guest photo uploads by QR, budget and vendors, checklist, day-of timeline, Spanish and Hebrew/RTL, custom domains, the client's own WhatsApp number (Embedded Signup), a *planner* role with multiple events.

@@ -73,7 +73,7 @@ export default async function EventSite({ params, searchParams }: { params: Prom
       <main className="flex min-h-screen items-center justify-center p-8 text-center" style={{ ...theme.vars, background: "var(--site-bg)", color: "var(--site-fg)" } as React.CSSProperties}>
         <div>
           <h1 className="text-5xl" style={{ fontFamily: theme.headingFont }}>{d.event.hosts ?? d.event.title}</h1>
-          <p className="mt-4 opacity-70">Muy pronto…</p>
+          <p className="mt-4 opacity-70">Coming soon…</p>
         </div>
       </main>
     );

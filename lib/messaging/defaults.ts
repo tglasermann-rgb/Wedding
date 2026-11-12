@@ -2,22 +2,22 @@
 export const DEFAULT_TEMPLATES = [
   {
     channel: "email" as const,
-    name: "Invitación",
-    subject: "{{hosts}} — ¡Estás invitado!",
-    body: "Hola {{first_name}},\n\nCon mucha ilusión te invitamos a {{event_title}} el {{event_date}}.\n\nToda la información y la confirmación de asistencia están en nuestra página.",
+    name: "Invitation",
+    subject: "{{hosts}} — You're invited!",
+    body: "Hi {{first_name}},\n\nWe'd love for you to join us at {{event_title}} on {{event_date}}.\n\nEverything you need to know, and your RSVP, is on our page.",
   },
   {
     channel: "email" as const,
-    name: "Recordatorio de confirmación",
-    subject: "¿Nos acompañas? Confirma tu asistencia",
-    body: "Hola {{first_name}},\n\nAún no recibimos tu confirmación para {{event_title}}. ¿Nos ayudas respondiendo en el siguiente enlace?",
+    name: "RSVP reminder",
+    subject: "Will you join us? Please RSVP",
+    body: "Hi {{first_name}},\n\nWe haven't received your RSVP for {{event_title}} yet. Could you let us know using the link below?",
   },
   {
     channel: "whatsapp" as const,
-    name: "Invitación WhatsApp",
+    name: "WhatsApp invitation",
     subject: null,
-    body: "Hola {{first_name}}, te invitamos a {{event_title}} el {{event_date}}. Confirma aquí: {{rsvp_link}}",
-    wa_template_name: "invitacion_evento",
-    wa_language: "es",
+    body: "Hi {{first_name}}, you're invited to {{event_title}} on {{event_date}}. RSVP here: {{rsvp_link}}",
+    wa_template_name: "event_invitation",
+    wa_language: "en_US",
   },
 ];

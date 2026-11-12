@@ -10,7 +10,7 @@ export default async function SeatingPage({ params }: { params: Promise<{ eventI
   const { supabase, canEdit } = await requireEvent(eventId);
   let { data: layout } = await supabase.from("venue_layouts").select("*").eq("event_id", eventId).order("created_at").limit(1).maybeSingle();
   if (!layout && canEdit) ({ data: layout } = await supabase.from("venue_layouts").insert({ event_id: eventId }).select("*").single());
-  if (!layout) return <p>No hay salón configurado.</p>;
+  if (!layout) return <p>No venue set up yet.</p>;
 
   const [guests, { data: tables }, { data: assignments }, { data: constraints }] = await Promise.all([
     loadGuests(supabase, eventId),
@@ -21,7 +21,7 @@ export default async function SeatingPage({ params }: { params: Promise<{ eventI
 
   return (
     <div className="space-y-3">
-      <div className="flex justify-end"><Link href={`/dashboard/${eventId}/seating/print`} className="text-sm underline">Imprimir lista de mesas</Link></div>
+      <div className="flex justify-end"><Link href={`/dashboard/${eventId}/seating/print`} className="text-sm underline">Print table list</Link></div>
       <EditorLoader
         eventId={eventId}
         layout={{ id: layout.id, width: layout.width, height: layout.height }}

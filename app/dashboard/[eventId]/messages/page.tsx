@@ -27,8 +27,8 @@ export default async function MessagesPage({ params, searchParams }: { params: P
     mq,
   ]);
   const tpls = (templates ?? []) as TemplateRow[];
-  const providers = { email: env.sender() ? "Sender" : "modo prueba (consola)", whatsapp: env.whatsapp() ? "Cloud API" : "no configurado" };
-  const fmt = (d: string | null) => (d ? new Date(d).toLocaleString("es", { dateStyle: "short", timeStyle: "short" }) : "");
+  const providers = { email: env.sender() ? "Sender" : "test mode (console)", whatsapp: env.whatsapp() ? "Cloud API" : "not configured" };
+  const fmt = (d: string | null) => (d ? new Date(d).toLocaleString("en-US", { dateStyle: "short", timeStyle: "short" }) : "");
 
   return (
     <div className="space-y-6">
@@ -36,29 +36,29 @@ export default async function MessagesPage({ params, searchParams }: { params: P
 
       {canEdit && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card title="Enviar o programar">
-            {tpls.length === 0 ? <Empty>Crea una plantilla primero.</Empty> : (
+          <Card title="Send or schedule">
+            {tpls.length === 0 ? <Empty>Create a template first.</Empty> : (
               <ActionForm action={createCampaign.bind(null, eventId)} className="space-y-3">
                 <div className="grid grid-cols-2 gap-3">
-                  <Field label="Plantilla">
+                  <Field label="Template">
                     <Select name="templateId" required>{tpls.map((t) => <option key={t.id} value={t.id}>{t.channel === "email" ? "✉" : "WA"} · {t.name}</option>)}</Select>
                   </Field>
-                  <Field label="Nombre del envío"><Input name="name" placeholder="Invitación inicial" /></Field>
+                  <Field label="Send name"><Input name="name" placeholder="First invitation" /></Field>
                 </div>
                 <AudienceFields sessions={sessions} />
-                <Field label="Programar (opcional)" hint="Vacío = enviar ahora"><Input type="datetime-local" name="scheduled_at" /></Field>
-                <SubmitButton pendingText="Enviando…">Enviar</SubmitButton>
+                <Field label="Schedule (optional)" hint="Leave empty to send now"><Input type="datetime-local" name="scheduled_at" /></Field>
+                <SubmitButton pendingText="Sending…">Send</SubmitButton>
               </ActionForm>
             )}
           </Card>
 
-          <Card title="Recordatorios automáticos">
+          <Card title="Automatic reminders">
             <ul className="mb-4 space-y-2 text-sm">
               {(automations ?? []).map((a) => (
                 <li key={a.id} className="flex items-center justify-between rounded-lg border border-stone-200 p-2">
-                  <span><b>{a.name}</b> — {a.days_before} días antes · {a.template?.name}{a.last_run_at && <span className="text-xs text-stone-500"> (ejecutado {fmt(a.last_run_at)})</span>}</span>
+                  <span><b>{a.name}</b> — {a.days_before} days before · {a.template?.name}{a.last_run_at && <span className="text-xs text-stone-500"> (last ran {fmt(a.last_run_at)})</span>}</span>
                   <form action={toggleAutomation.bind(null, eventId, a.id, !a.enabled)}>
-                    <button className="text-xs underline">{a.enabled ? "Pausar" : "Activar"}</button>
+                    <button className="text-xs underline">{a.enabled ? "Pause" : "Turn on"}</button>
                   </form>
                 </li>
               ))}
@@ -66,19 +66,19 @@ export default async function MessagesPage({ params, searchParams }: { params: P
             {tpls.length > 0 && (
               <ActionForm action={createAutomation.bind(null, eventId)} className="space-y-3">
                 <div className="grid grid-cols-3 gap-2">
-                  <Field label="Nombre"><Input name="name" defaultValue="Recordatorio" /></Field>
-                  <Field label="Días antes"><Input name="days_before" type="number" min={0} defaultValue={30} /></Field>
-                  <Field label="Plantilla"><Select name="templateId">{tpls.map((t) => <option key={t.id} value={t.id}>{t.channel === "email" ? "✉" : "WA"} · {t.name}</option>)}</Select></Field>
+                  <Field label="Name"><Input name="name" defaultValue="Reminder" /></Field>
+                  <Field label="Days before"><Input name="days_before" type="number" min={0} defaultValue={30} /></Field>
+                  <Field label="Template"><Select name="templateId">{tpls.map((t) => <option key={t.id} value={t.id}>{t.channel === "email" ? "✉" : "WA"} · {t.name}</option>)}</Select></Field>
                 </div>
                 <AudienceFields sessions={sessions} defaultRsvp={["pending", "maybe"]} />
-                <SubmitButton variant="secondary">Crear automatización</SubmitButton>
+                <SubmitButton variant="secondary">Create reminder</SubmitButton>
               </ActionForm>
             )}
           </Card>
         </div>
       )}
 
-      <Card title="Plantillas">
+      <Card title="Templates">
         <div className="grid gap-4 lg:grid-cols-2">
           {tpls.map((t) => (
             <details key={t.id} className="rounded-lg border border-stone-200 p-3">
@@ -88,18 +88,18 @@ export default async function MessagesPage({ params, searchParams }: { params: P
           ))}
           {canEdit && (
             <details className="rounded-lg border border-dashed border-stone-300 p-3">
-              <summary className="cursor-pointer text-sm font-medium">+ Nueva plantilla</summary>
+              <summary className="cursor-pointer text-sm font-medium">+ New template</summary>
               <TemplateForm eventId={eventId} canEdit />
             </details>
           )}
         </div>
         <p className="mt-3 text-xs text-stone-500">
-          Variables: {AVAILABLE_VARS.map((v) => `{{${v}}}`).join(" ")}. En WhatsApp, la plantilla aprobada en Meta debe tener {"{{1}}, {{2}}…"} en el mismo orden en que aparecen las variables aquí, y botones de respuesta rápida “Sí / No / Tal vez”.
+          Variables: {AVAILABLE_VARS.map((v) => `{{${v}}}`).join(" ")}. For WhatsApp, the template approved in Meta must use {"{{1}}, {{2}}…"} in the same order the variables appear here, with “Yes / No / Maybe” quick-reply buttons.
         </p>
       </Card>
 
       {(campaigns ?? []).length > 0 && (
-        <Card title="Envíos">
+        <Card title="Sends">
           <table className="w-full text-sm">
             <tbody className="divide-y divide-stone-100">
               {(campaigns ?? []).map((c) => (
@@ -107,7 +107,7 @@ export default async function MessagesPage({ params, searchParams }: { params: P
                   <td className="py-1.5">{c.name}</td><td>{c.template?.name}</td>
                   <td>{c.scheduled_at ? fmt(c.scheduled_at) : fmt(c.created_at)}</td>
                   <td><Badge tone={c.status === "done" ? "sent" : c.status === "cancelled" ? "failed" : "queued"}>{c.status}</Badge></td>
-                  <td className="text-right">{c.status === "scheduled" && canEdit && <form action={cancelCampaign.bind(null, eventId, c.id)}><button className="text-xs underline">Cancelar</button></form>}</td>
+                  <td className="text-right">{c.status === "scheduled" && canEdit && <form action={cancelCampaign.bind(null, eventId, c.id)}><button className="text-xs underline">Cancel</button></form>}</td>
                 </tr>
               ))}
             </tbody>
@@ -116,23 +116,23 @@ export default async function MessagesPage({ params, searchParams }: { params: P
       )}
 
       <Card
-        title="Historial de mensajes"
+        title="Message history"
         actions={
           <div className="flex items-center gap-2 text-sm">
             <form className="flex gap-2">
-              <Select name="channel" defaultValue={filter.channel ?? ""} className="w-32"><option value="">Canal</option><option value="email">Email</option><option value="whatsapp">WhatsApp</option></Select>
+              <Select name="channel" defaultValue={filter.channel ?? ""} className="w-32"><option value="">Channel</option><option value="email">Email</option><option value="whatsapp">WhatsApp</option></Select>
               <Select name="status" defaultValue={filter.status ?? ""} className="w-36">
-                <option value="">Estado</option>{Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+                <option value="">Status</option>{Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
               </Select>
-              <button className="underline">Filtrar</button>
+              <button className="underline">Filter</button>
             </form>
-            {canEdit && <form action={retryFailed.bind(null, eventId)}><button className="underline">Reintentar fallidos</button></form>}
+            {canEdit && <form action={retryFailed.bind(null, eventId)}><button className="underline">Retry failed</button></form>}
           </div>
         }
       >
         <div className="overflow-x-auto">
           <table className="w-full min-w-[800px] text-sm">
-            <thead className="text-left text-xs uppercase text-stone-500"><tr><th className="py-2">Invitado</th><th>Canal</th><th>A</th><th>Origen</th><th>Estado</th><th>Enviado</th><th>Entregado</th><th>Abierto/leído</th><th>Respondió</th></tr></thead>
+            <thead className="text-left text-xs uppercase text-stone-500"><tr><th className="py-2">Guest</th><th>Channel</th><th>To</th><th>Source</th><th>Status</th><th>Sent</th><th>Delivered</th><th>Opened/read</th><th>Replied</th></tr></thead>
             <tbody className="divide-y divide-stone-100">
               {(messages ?? []).map((m) => {
                 const g = m.guest as unknown as { first_name: string; last_name: string | null } | null;
@@ -151,7 +151,7 @@ export default async function MessagesPage({ params, searchParams }: { params: P
               })}
             </tbody>
           </table>
-          {(messages ?? []).length === 0 && <p className="py-6 text-center text-sm text-stone-500">Sin mensajes.</p>}
+          {(messages ?? []).length === 0 && <p className="py-6 text-center text-sm text-stone-500">No messages yet.</p>}
         </div>
       </Card>
     </div>
@@ -163,19 +163,19 @@ function TemplateForm({ eventId, t, canEdit }: { eventId: string; t?: TemplateRo
     <ActionForm action={saveTemplate.bind(null, eventId)} className="mt-3 space-y-2">
       <input type="hidden" name="id" value={t?.id ?? ""} />
       <div className="grid grid-cols-2 gap-2">
-        <Field label="Canal"><Select name="channel" defaultValue={t?.channel ?? "email"}><option value="email">Email</option><option value="whatsapp">WhatsApp</option></Select></Field>
-        <Field label="Nombre"><Input name="name" required defaultValue={t?.name} /></Field>
+        <Field label="Channel"><Select name="channel" defaultValue={t?.channel ?? "email"}><option value="email">Email</option><option value="whatsapp">WhatsApp</option></Select></Field>
+        <Field label="Name"><Input name="name" required defaultValue={t?.name} /></Field>
       </div>
-      <Field label="Asunto (email)"><Input name="subject" defaultValue={t?.subject ?? ""} /></Field>
-      <Field label="Mensaje"><Textarea name="body" required defaultValue={t?.body} rows={5} /></Field>
+      <Field label="Subject (email)"><Input name="subject" defaultValue={t?.subject ?? ""} /></Field>
+      <Field label="Message"><Textarea name="body" required defaultValue={t?.body} rows={5} /></Field>
       <div className="grid grid-cols-2 gap-2">
-        <Field label="Plantilla aprobada en Meta (WhatsApp)"><Input name="wa_template_name" defaultValue={t?.wa_template_name ?? ""} /></Field>
-        <Field label="Idioma WhatsApp"><Input name="wa_language" defaultValue={t?.wa_language ?? "es"} /></Field>
+        <Field label="Approved Meta template name (WhatsApp)"><Input name="wa_template_name" defaultValue={t?.wa_template_name ?? ""} /></Field>
+        <Field label="WhatsApp language"><Input name="wa_language" defaultValue={t?.wa_language ?? "en_US"} /></Field>
       </div>
       {canEdit && (
         <div className="flex gap-2">
-          <SubmitButton size="sm">Guardar</SubmitButton>
-          {t && <button formAction={async () => { "use server"; await deleteTemplate(eventId, t.id); }} className="text-xs text-red-700 underline">Eliminar</button>}
+          <SubmitButton size="sm">Save</SubmitButton>
+          {t && <button formAction={async () => { "use server"; await deleteTemplate(eventId, t.id); }} className="text-xs text-red-700 underline">Delete</button>}
         </div>
       )}
     </ActionForm>

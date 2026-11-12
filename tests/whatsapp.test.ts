@@ -8,7 +8,7 @@ describe("whatsapp webhook", () => {
       entry: [{ changes: [{ value: {
         statuses: [{ id: "wamid.1", status: "read", timestamp: "1700000000" }, { id: "wamid.2", status: "failed", timestamp: "1", errors: [{ title: "bad" }] }],
         messages: [
-          { from: "5215512345678", timestamp: "1700000001", type: "button", button: { text: "Sí", payload: "RSVP_YES" }, context: { id: "wamid.1" } },
+          { from: "5215512345678", timestamp: "1700000001", type: "button", button: { text: "Yes", payload: "RSVP_YES" }, context: { id: "wamid.1" } },
           { from: "5215512345678", timestamp: "1700000002", type: "text", text: { body: "tal vez" } },
         ],
       } }] }],

@@ -48,15 +48,15 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
 
   function exportCsv() {
     const data = rows.map((g) => ({
-      familia: g.household.name, nombre: g.first_name, apellido: g.last_name ?? "", correo: g.email ?? "", telefono: g.phone ?? "",
-      lado: g.household.side ?? "", etiquetas: g.household.tags.join(", "), niño: g.is_child ? "sí" : "", dieta: g.dietary ?? "",
+      household: g.household.name, "first name": g.first_name, "last name": g.last_name ?? "", email: g.email ?? "", phone: g.phone ?? "",
+      side: g.household.side ?? "", tags: g.household.tags.join(", "), child: g.is_child ? "yes" : "", dietary: g.dietary ?? "",
       ...Object.fromEntries(sessions.map((s) => [s.name, RSVP_LABELS[g.rsvps.find((r) => r.session_id === s.id)?.status ?? "pending"]])),
       link: rsvpBase + g.household.token,
     }));
     const blob = new Blob(["﻿" + Papa.unparse(data)], { type: "text/csv;charset=utf-8" });
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = "invitados.csv";
+    a.download = "guests.csv";
     a.click();
   }
 
@@ -67,21 +67,21 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
 
   return (
     <Card
-      title={`Invitados (${rows.length}/${guests.length})`}
+      title={`Guests (${rows.length}/${guests.length})`}
       actions={
         <div className="flex flex-wrap gap-2">
-          <Input placeholder="Buscar…" value={q} onChange={(e) => setQ(e.target.value)} className="w-44" />
+          <Input placeholder="Search…" value={q} onChange={(e) => setQ(e.target.value)} className="w-44" />
           <Select value={status} onChange={(e) => setStatus(e.target.value as RsvpStatus | "")} className="w-36">
-            <option value="">Todas las respuestas</option>
+            <option value="">All responses</option>
             {(["yes", "maybe", "no", "pending"] as const).map((s) => <option key={s} value={s}>{RSVP_LABELS[s]}</option>)}
           </Select>
           {tags.length > 0 && (
             <Select value={tag} onChange={(e) => setTag(e.target.value)} className="w-36">
-              <option value="">Todas las etiquetas</option>
+              <option value="">All tags</option>
               {tags.map((t) => <option key={t}>{t}</option>)}
             </Select>
           )}
-          <Button variant="secondary" onClick={exportCsv}>Exportar CSV</Button>
+          <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
         </div>
       }
     >
@@ -89,9 +89,9 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
         <table className="w-full min-w-[900px] text-sm">
           <thead className="text-left text-xs uppercase text-stone-500">
             <tr>
-              <th className="py-2">Invitación</th><th>Nombre</th><th>Email</th><th>WhatsApp</th>
+              <th className="py-2">Household</th><th>Name</th><th>Email</th><th>WhatsApp</th>
               {sessions.map((s) => <th key={s.id}>{s.name}</th>)}
-              <th>Mensajes</th><th></th>
+              <th>Messages</th><th></th>
             </tr>
           </thead>
           <tbody className="divide-y divide-stone-100">
@@ -106,7 +106,7 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
                 </td>
                 <td>
                   <span>{g.first_name} {g.last_name}</span>
-                  {g.is_child && <span className="ml-1 text-xs text-stone-500">(niño)</span>}
+                  {g.is_child && <span className="ml-1 text-xs text-stone-500">(child)</span>}
                   {g.is_plus_one && <span className="ml-1 text-xs text-stone-500">(+1)</span>}
                   {g.dietary && <div className="text-xs text-amber-700">{g.dietary}</div>}
                 </td>
@@ -131,17 +131,17 @@ export function GuestTable({ eventId, guests, sessions, lastMessage, canEdit, rs
                 </td>
                 <td className="whitespace-nowrap text-right">
                   <Button size="sm" variant="ghost" onClick={() => { navigator.clipboard.writeText(rsvpBase + g.household.token); setCopied(g.id); setTimeout(() => setCopied(null), 1500); }}>
-                    {copied === g.id ? "¡Copiado!" : "Link"}
+                    {copied === g.id ? "Copied!" : "Link"}
                   </Button>
                   {canEdit && (
-                    <Button size="sm" variant="danger" onClick={() => confirm(`¿Eliminar a ${g.first_name}?`) && start(() => deleteGuest(eventId, g.id))}>✕</Button>
+                    <Button size="sm" variant="danger" onClick={() => confirm(`Remove ${g.first_name}?`) && start(() => deleteGuest(eventId, g.id))}>✕</Button>
                   )}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
-        {rows.length === 0 && <p className="py-8 text-center text-sm text-stone-500">No hay invitados que coincidan.</p>}
+        {rows.length === 0 && <p className="py-8 text-center text-sm text-stone-500">No guests match.</p>}
       </div>
     </Card>
   );
